@@ -20,28 +20,29 @@ tailwind.config = {
 </script>
 <style>
 * { box-sizing: border-box; }
-body { font-family: 'Inter', system-ui, sans-serif; background: #F8FAFC; color: #1E1E1E; margin: 0; }
+body { font-family: 'Inter', system-ui, sans-serif; background: #F0F4F8; color: #1E293B; margin: 0; }
 
 /* Scrollbar */
-::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar { width: 4px; height: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 3px; }
+::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: #94A3B8; }
 
 /* Sidebar nav item */
 .nav-item {
-  display: flex; align-items: center; gap: 8px;
-  padding: 7px 16px; cursor: pointer; font-size: 13px; font-weight: 500;
-  color: #475569; border-radius: 0; transition: all 0.15s ease;
+  display: flex; align-items: center; gap: 9px;
+  padding: 7px 16px 7px 14px; cursor: pointer; font-size: 13px; font-weight: 500;
+  color: #475569; border-radius: 0; transition: background 0.12s, color 0.12s;
   border-left: 2px solid transparent; user-select: none;
 }
-.nav-item:hover { background: #F1F5F9; color: #1E1E1E; }
-.nav-item.active { background: #F8FAFC; color: #1E1E1E; border-left-color: #1E1E1E; font-weight: 600; }
+.nav-item:hover { background: #EFF6FF; color: #1E40AF; }
+.nav-item.active { background: #EFF6FF; color: #1D4ED8; border-left-color: #3B82F6; font-weight: 600; }
 
 /* Group label */
 .group-label {
-  font-size: 10.5px; font-weight: 700; letter-spacing: 0.09em;
+  font-size: 10px; font-weight: 700; letter-spacing: 0.1em;
   text-transform: uppercase; color: #94A3B8;
-  padding: 20px 16px 6px; display: flex; align-items: center; gap:6px;
+  padding: 18px 16px 5px; display: flex; align-items: center; gap: 6px;
 }
 
 /* Field type badge */
@@ -53,65 +54,63 @@ body { font-family: 'Inter', system-ui, sans-serif; background: #F8FAFC; color: 
 }
 
 /* Status badge */
-.badge-req { background: #FEF2F2; color: #DC2626; border: 1px solid #FECACA; font-size: 11px; font-weight: 600; padding: 2px 7px; border-radius: 4px; }
-.badge-opt { background: #FFFBEB; color: #A16207; border: 1px solid #FDE68A; font-size: 11px; font-weight: 500; padding: 2px 7px; border-radius: 4px; }
+.badge-req { background: #FEF2F2; color: #B91C1C; border: 1px solid #FECACA; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; }
+.badge-opt { background: #FEF9C3; color: #854D0E; border: 1px solid #FDE68A; font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 4px; }
 
-/* Note boxes */
-.note-tip  { background: #FFFBEB; border: 1px solid #FDE68A; border-left: 3px solid #F59E0B; }
-.note-info { background: #FFFBEB; border: 1px solid #FDE68A; border-left: 3px solid #F59E0B; }
+/* Note boxes — differentiated */
+.note-tip  { background: #F0FDF4; border: 1px solid #BBF7D0; border-left: 3px solid #22C55E; }
+.note-info { background: #EFF6FF; border: 1px solid #BFDBFE; border-left: 3px solid #3B82F6; }
 .note-warn { background: #FFFBEB; border: 1px solid #FDE68A; border-left: 3px solid #F59E0B; }
 
 /* Content fade */
 #content-area { transition: opacity 0.12s ease; }
 #content-area.fading { opacity: 0; }
 
-/* Search highlight */
 .nav-item.hidden-item { display: none; }
 
-/* Sidebar group collapse */
 .group-items { overflow: hidden; }
 #sidebar { transition: width 0.18s ease; }
 #main-content { transition: margin-left 0.18s ease; }
 #sidebar-toggle {
   position: fixed;
   top: 64px;
-  width: 44px;
-  height: 44px;
+  width: 26px;
+  height: 26px;
   border-radius: 999px;
-  border: 1px solid #cbd5e1;
+  border: 1px solid #E2E8F0;
   background: white;
-  color: #334155;
+  color: #64748B;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  font-size: 12px;
   cursor: pointer;
   z-index: 120;
-  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.15);
-  transition: left 0.18s ease, transform 0.18s ease;
+  box-shadow: 0 1px 4px rgba(15, 23, 42, 0.1);
+  transition: left 0.18s ease, box-shadow 0.13s;
 }
+#sidebar-toggle:hover { box-shadow: 0 2px 8px rgba(15, 23, 42, 0.16); color: #1E293B; }
 
 .glass-card {
-  background: rgba(255, 255, 255, 0.58);
-  border: 1px solid rgba(203, 213, 225, 0.75);
-  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.06);
 }
 </style>
 </head>
 <body>
 
 <!-- TOP HEADER -->
-<header style="position:fixed;top:0;left:0;right:0;height:52px;background:#1E1E1E;z-index:100;display:flex;align-items:center;padding:0 20px;gap:16px;border-bottom:1px solid #1E293B;">
+<header style="position:fixed;top:0;left:0;right:0;height:52px;background:linear-gradient(135deg,#0F172A 0%,#1E3A5F 100%);z-index:100;display:flex;align-items:center;padding:0 20px;gap:16px;border-bottom:1px solid rgba(255,255,255,0.08);box-shadow:0 1px 8px rgba(0,0,0,0.3);">
   <div style="display:flex;align-items:center;gap:10px;flex-shrink:0;">
-    <div style="width:30px;height:30px;background:#1E1E1E;border-radius:6px;display:flex;align-items:center;justify-content:center;">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <div style="width:32px;height:32px;background:rgba(59,130,246,0.2);border:1px solid rgba(99,162,255,0.35);border-radius:8px;display:flex;align-items:center;justify-content:center;">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#93C5FD" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
         <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
       </svg>
     </div>
     <div>
-      <div style="color:white;font-size:13px;font-weight:700;line-height:1.2;font-family:'Space Grotesk',sans-serif;">Suruhanjaya Tenaga</div>
-      <div style="color:#64748B;font-size:11px;line-height:1.2;">Content Type Reference</div>
+      <div style="color:#F1F5F9;font-size:13px;font-weight:700;line-height:1.2;font-family:'Space Grotesk',sans-serif;letter-spacing:0.01em;">Suruhanjaya Tenaga</div>
+      <div style="color:#64748B;font-size:10.5px;line-height:1.3;letter-spacing:0.02em;">Content Type Reference</div>
     </div>
   </div>
 
@@ -121,24 +120,24 @@ body { font-family: 'Inter', system-ui, sans-serif; background: #F8FAFC; color: 
       <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
     </svg>
     <input id="search-input" type="text" placeholder="Search content types…"
-      style="background:#1E293B;border:1px solid #334155;color:white;font-size:12.5px;font-family:Inter,sans-serif;padding:6px 12px 6px 30px;border-radius:6px;width:220px;outline:none;"
-      onfocus="this.style.borderColor='#1E1E1E'" onblur="this.style.borderColor='#334155'"
+      style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);color:#F1F5F9;font-size:12.5px;font-family:Inter,sans-serif;padding:6px 12px 6px 30px;border-radius:7px;width:220px;outline:none;transition:border-color 0.15s,background 0.15s;"
+      onfocus="this.style.borderColor='rgba(99,162,255,0.5)';this.style.background='rgba(255,255,255,0.12)'" onblur="this.style.borderColor='rgba(255,255,255,0.12)';this.style.background='rgba(255,255,255,0.08)'"
     >
   </div>
 
   <!-- Stats -->
-  <div style="display:flex;align-items:center;gap:16px;flex-shrink:0;">
+  <div style="display:flex;align-items:center;gap:14px;flex-shrink:0;">
     <div style="text-align:center;">
-      <div style="color:white;font-size:15px;font-weight:700;line-height:1;" id="stat-total">19</div>
-      <div style="color:#64748B;font-size:10px;margin-top:1px;">Types</div>
+      <div style="color:#F1F5F9;font-size:15px;font-weight:700;line-height:1;" id="stat-total">19</div>
+      <div style="color:#64748B;font-size:10px;margin-top:2px;letter-spacing:0.04em;">Types</div>
     </div>
-    <div style="width:1px;height:24px;background:#1E293B;"></div>
+    <div style="width:1px;height:20px;background:rgba(255,255,255,0.1);"></div>
     <div style="text-align:center;">
-      <div style="color:white;font-size:15px;font-weight:700;line-height:1;">6</div>
-      <div style="color:#64748B;font-size:10px;margin-top:1px;">Groups</div>
+      <div style="color:#F1F5F9;font-size:15px;font-weight:700;line-height:1;">6</div>
+      <div style="color:#64748B;font-size:10px;margin-top:2px;letter-spacing:0.04em;">Groups</div>
     </div>
-    <div style="width:1px;height:24px;background:#1E293B;"></div>
-    <div style="color:#64748B;font-size:11px;">v2.0</div>
+    <div style="width:1px;height:20px;background:rgba(255,255,255,0.1);"></div>
+    <div style="background:rgba(59,130,246,0.2);border:1px solid rgba(99,162,255,0.3);color:#93C5FD;font-size:10px;font-weight:600;padding:2px 8px;border-radius:4px;letter-spacing:0.06em;">v2.0</div>
   </div>
 </header>
 
@@ -146,7 +145,7 @@ body { font-family: 'Inter', system-ui, sans-serif; background: #F8FAFC; color: 
 <div style="display:flex;min-height:100vh;padding-top:52px;">
 
   <!-- SIDEBAR -->
-  <aside id="sidebar" style="position:fixed;top:52px;left:0;bottom:0;width:240px;background:white;border-right:1px solid #E2E8F0;overflow-y:auto;z-index:90;">
+  <aside id="sidebar" style="position:fixed;top:52px;left:0;bottom:0;width:240px;background:#FAFBFC;border-right:1px solid #E8EDF2;overflow-y:auto;z-index:90;">
     <div id="sidebar-nav"></div>
     <!-- Empty search state -->
     <div id="no-results" style="display:none;padding:24px 16px;text-align:center;">
@@ -163,9 +162,9 @@ body { font-family: 'Inter', system-ui, sans-serif; background: #F8FAFC; color: 
 
       <!-- WELCOME STATE -->
       <div id="welcome-view">
-        <div style="max-width:640px;margin:40px auto;text-align:center;">
-          <div style="width:56px;height:56px;background:#EFF6FF;border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;">
-            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#1E1E1E" stroke-width="1.8">
+        <div style="max-width:640px;margin:48px auto;text-align:center;">
+          <div style="width:60px;height:60px;background:linear-gradient(135deg,#EFF6FF,#DBEAFE);border:1px solid #BFDBFE;border-radius:16px;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;box-shadow:0 4px 16px rgba(59,130,246,0.12);">
+            <svg width="27" height="27" viewBox="0 0 24 24" fill="none" stroke="#3B82F6" stroke-width="1.8">
               <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
               <polyline points="14 2 14 8 20 8"/>
               <line x1="16" y1="13" x2="8" y2="13"/>
@@ -173,8 +172,8 @@ body { font-family: 'Inter', system-ui, sans-serif; background: #F8FAFC; color: 
               <polyline points="10 9 9 9 8 9"/>
             </svg>
           </div>
-          <h1 style="font-size:22px;font-weight:700;color:#1E1E1E;margin:0 0 10px;font-family:'Space Grotesk',sans-serif;">Content Type Reference</h1>
-          <p style="color:#64748B;font-size:14px;line-height:1.6;margin:0 0 32px;">
+          <h1 style="font-size:24px;font-weight:700;color:#0F172A;margin:0 0 10px;font-family:'Space Grotesk',sans-serif;letter-spacing:-0.01em;">Content Type Reference</h1>
+          <p style="color:#64748B;font-size:14px;line-height:1.65;margin:0 0 32px;max-width:480px;margin-left:auto;margin-right:auto;">
             Documentation for all 19 content types used in the ST website. Select a content type from the sidebar to view its fields, requirements, and usage notes.
           </p>
           <!-- Group overview cards -->
@@ -611,10 +610,10 @@ function buildSidebar(filter) {
     gl.title = g;
     gl.innerHTML = sidebarCollapsed
       ? (GROUP_ICONS[g] || '')
-      : '<span style="display:inline-flex;align-items:center;gap:6px;">' + (GROUP_ICONS[g]||'') + '<span>' + g + '</span></span><span style="margin-left:auto;color:#1E1E1E;">' + (groupAccordionState[g] === false ? "▸" : "▾") + '</span>';
+      : '<span style="display:inline-flex;align-items:center;gap:6px;">' + (GROUP_ICONS[g]||'') + '<span>' + g + '</span></span><span style="margin-left:auto;color:#CBD5E1;font-size:9px;">' + (groupAccordionState[g] === false ? "▸" : "▾") + '</span>';
     gl.style.cssText = sidebarCollapsed
-      ? 'font-size:10.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#1E1E1E;padding:16px 0 8px;display:flex;align-items:center;justify-content:center;'
-      : 'font-size:10.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#1E1E1E;padding:20px 16px 6px;display:flex;align-items:center;gap:6px;cursor:pointer;';
+      ? 'font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#94A3B8;padding:16px 0 8px;display:flex;align-items:center;justify-content:center;'
+      : 'font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#94A3B8;padding:18px 16px 5px;display:flex;align-items:center;gap:6px;cursor:pointer;';
     nav.appendChild(gl);
 
     var groupItemsEl = document.createElement('div');
@@ -708,73 +707,73 @@ function renderSection(s) {
     var rows = fields.map(function(f){
       var typeLabel = TYPE_LABELS[f.type] || f.type;
       var multi = f.multiple ? ' <span style="font-size:10px;background:#F0FDF4;color:#16A34A;border:1px solid #BBF7D0;padding:1px 5px;border-radius:3px;margin-left:3px;">×multi</span>' : '';
-      return '<tr style="border-bottom:1px solid #F1F5F9;">' +
-        '<td style="padding:10px 12px;font-size:13px;font-weight:500;color:#1E1E1E;white-space:nowrap;">' + f.label + multi + '</td>' +
-        '<td style="padding:10px 12px;"><code style="font-size:11px;background:#F8FAFC;color:#64748B;padding:2px 6px;border-radius:3px;font-family:ui-monospace,monospace;border:1px solid #E2E8F0;">' + f.machine + '</code></td>' +
+      return '<tr style="border-bottom:1px solid #F1F5F9;transition:background .1s;" onmouseover="this.style.background=\'#FAFCFF\'" onmouseout="this.style.background=\'\'">' +
+        '<td style="padding:10px 12px;font-size:13px;font-weight:500;color:#1E293B;white-space:nowrap;">' + f.label + multi + '</td>' +
+        '<td style="padding:10px 12px;"><code style="font-size:11px;background:#F8FAFC;color:#475569;padding:2px 7px;border-radius:4px;font-family:ui-monospace,monospace;border:1px solid #E8EDF2;">' + f.machine + '</code></td>' +
         '<td style="padding:10px 12px;"><span class="type-pill">' + typeLabel + '</span></td>' +
-        '<td style="padding:10px 12px;font-size:12.5px;color:#64748B;line-height:1.5;">' + f.hint + '</td>' +
+        '<td style="padding:10px 12px;font-size:12.5px;color:#64748B;line-height:1.55;">' + f.hint + '</td>' +
         '<td style="padding:10px 12px;white-space:nowrap;">' +
-          '<button onclick="editField(\'' + s.id + '\',' + f.id + ')" style="background:#F8FAFC;border:1px solid #E2E8F0;color:#334155;padding:4px 8px;border-radius:5px;font-size:11px;cursor:pointer;margin-right:4px;">Edit</button>' +
-          '<button onclick="deleteField(\'' + s.id + '\',' + f.id + ')" style="background:white;border:1px solid #FECACA;color:#DC2626;padding:4px 8px;border-radius:5px;font-size:11px;cursor:pointer;">Delete</button>' +
+          '<button onclick="editField(\'' + s.id + '\',' + f.id + ')" style="background:white;border:1px solid #E2E8F0;color:#334155;padding:3px 9px;border-radius:5px;font-size:11px;cursor:pointer;margin-right:4px;transition:background .1s;" onmouseover="this.style.background=\'#F8FAFC\'" onmouseout="this.style.background=\'white\'">Edit</button>' +
+          '<button onclick="deleteField(\'' + s.id + '\',' + f.id + ')" style="background:white;border:1px solid #FECACA;color:#DC2626;padding:3px 9px;border-radius:5px;font-size:11px;cursor:pointer;transition:background .1s;" onmouseover="this.style.background=\'#FEF2F2\'" onmouseout="this.style.background=\'white\'">Delete</button>' +
         '</td>' +
         '</tr>';
     }).join('');
-    return '<div style="overflow-x:auto;"><table class="glass-card" style="width:100%;border-collapse:collapse;border-radius:8px;overflow:hidden;">' +
-      '<thead><tr style="background:#F8FAFC;">' +
-      '<th style="padding:9px 12px;font-size:11px;font-weight:600;color:#64748B;text-align:left;letter-spacing:.04em;text-transform:uppercase;">Field</th>' +
-      '<th style="padding:9px 12px;font-size:11px;font-weight:600;color:#64748B;text-align:left;letter-spacing:.04em;text-transform:uppercase;">Machine Name</th>' +
-      '<th style="padding:9px 12px;font-size:11px;font-weight:600;color:#64748B;text-align:left;letter-spacing:.04em;text-transform:uppercase;">Type</th>' +
-      '<th style="padding:9px 12px;font-size:11px;font-weight:600;color:#64748B;text-align:left;letter-spacing:.04em;text-transform:uppercase;">Hint</th>' +
-      '<th style="padding:9px 12px;font-size:11px;font-weight:600;color:#64748B;text-align:left;letter-spacing:.04em;text-transform:uppercase;">Actions</th>' +
+    return '<div style="overflow-x:auto;border-radius:10px;border:1px solid #E8EDF2;box-shadow:0 1px 6px rgba(15,23,42,.04);"><table style="width:100%;border-collapse:collapse;min-width:520px;">' +
+      '<thead><tr style="background:#F8FAFC;border-bottom:1px solid #E8EDF2;">' +
+      '<th style="padding:9px 12px;font-size:10.5px;font-weight:700;color:#94A3B8;text-align:left;letter-spacing:.06em;text-transform:uppercase;">Field</th>' +
+      '<th style="padding:9px 12px;font-size:10.5px;font-weight:700;color:#94A3B8;text-align:left;letter-spacing:.06em;text-transform:uppercase;">Machine Name</th>' +
+      '<th style="padding:9px 12px;font-size:10.5px;font-weight:700;color:#94A3B8;text-align:left;letter-spacing:.06em;text-transform:uppercase;">Type</th>' +
+      '<th style="padding:9px 12px;font-size:10.5px;font-weight:700;color:#94A3B8;text-align:left;letter-spacing:.06em;text-transform:uppercase;">Hint</th>' +
+      '<th style="padding:9px 12px;font-size:10.5px;font-weight:700;color:#94A3B8;text-align:left;letter-spacing:.06em;text-transform:uppercase;">Actions</th>' +
       '</tr></thead><tbody>' + rows + '</tbody></table></div>';
   }
 
   view.innerHTML =
     // Header
-    '<div style="display:flex;align-items:flex-start;gap:14px;margin-bottom:24px;">' +
-      '<div style="width:48px;height:48px;border-radius:10px;background:' + s.color + ';display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="' + s.icon + '" style="font-size:24px;color:#475569;"></i></div>' +
+    '<div style="display:flex;align-items:flex-start;gap:14px;margin-bottom:20px;">' +
+      '<div style="width:50px;height:50px;border-radius:12px;background:' + s.color + ';display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 8px rgba(0,0,0,0.06);"><i class="' + s.icon + '" style="font-size:24px;color:#475569;"></i></div>' +
       '<div style="flex:1;">' +
         '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">' +
-          '<h1 style="font-size:20px;font-weight:700;color:#1E1E1E;margin:0;font-family:\'Space Grotesk\',sans-serif;">' + s.name + '</h1>' +
-          '<span style="font-size:11px;background:#F1F5F9;color:#64748B;padding:2px 8px;border-radius:4px;border:1px solid #E2E8F0;">' + s.group + '</span>' +
+          '<h1 style="font-size:20px;font-weight:700;color:#0F172A;margin:0;font-family:\'Space Grotesk\',sans-serif;letter-spacing:-0.01em;">' + s.name + '</h1>' +
+          '<span style="font-size:10.5px;background:#F1F5F9;color:#64748B;padding:2px 8px;border-radius:4px;border:1px solid #E2E8F0;letter-spacing:0.02em;">' + s.group + '</span>' +
         '</div>' +
-        '<p style="color:#64748B;font-size:13.5px;margin:6px 0 0;line-height:1.6;">' + s.description + '</p>' +
+        '<p style="color:#64748B;font-size:13.5px;margin:5px 0 0;line-height:1.6;">' + s.description + '</p>' +
       '</div>' +
     '</div>' +
 
-    '<div style="display:flex;gap:8px;margin-bottom:18px;">' +
-      '<button onclick="editContentType(\'' + s.id + '\')" style="background:#1E1E1E;color:white;border:1px solid #1E1E1E;padding:7px 12px;border-radius:6px;font-size:12px;cursor:pointer;">Edit</button>' +
-      '<button onclick="deleteContentType(\'' + s.id + '\')" style="background:white;color:#DC2626;border:1px solid #FECACA;padding:7px 12px;border-radius:6px;font-size:12px;cursor:pointer;">Delete</button>' +
-      '<button onclick="createField(\'' + s.id + '\')" style="background:#1E1E1E;color:white;border:1px solid #1E1E1E;padding:7px 12px;border-radius:6px;font-size:12px;cursor:pointer;">Add Field</button>' +
+    '<div style="display:flex;gap:6px;margin-bottom:20px;">' +
+      '<button onclick="editContentType(\'' + s.id + '\')" style="background:#0F172A;color:white;border:1px solid #0F172A;padding:6px 13px;border-radius:6px;font-size:12px;cursor:pointer;font-family:Inter,sans-serif;font-weight:500;transition:opacity .15s;" onmouseover="this.style.opacity=\'.85\'" onmouseout="this.style.opacity=\'1\'">Edit</button>' +
+      '<button onclick="deleteContentType(\'' + s.id + '\')" style="background:white;color:#DC2626;border:1px solid #FECACA;padding:6px 13px;border-radius:6px;font-size:12px;cursor:pointer;font-family:Inter,sans-serif;transition:background .15s;" onmouseover="this.style.background=\'#FEF2F2\'" onmouseout="this.style.background=\'white\'">Delete</button>' +
+      '<button onclick="createField(\'' + s.id + '\')" style="margin-left:auto;background:linear-gradient(135deg,#2563EB,#3B82F6);color:white;border:none;padding:6px 14px;border-radius:6px;font-size:12px;cursor:pointer;font-family:Inter,sans-serif;font-weight:500;box-shadow:0 1px 4px rgba(59,130,246,.3);transition:opacity .15s;" onmouseover="this.style.opacity=\'.88\'" onmouseout="this.style.opacity=\'1\'">+ Add Field</button>' +
     '</div>' +
 
     // Meta row
-    '<div style="display:flex;gap:8px;margin-bottom:24px;flex-wrap:wrap;">' +
-      '<div class="glass-card" style="border-radius:6px;padding:8px 14px;text-align:center;">' +
-        '<div style="font-size:18px;font-weight:700;color:#1E1E1E;">' + s.fields.length + '</div>' +
-        '<div style="font-size:11px;color:#94A3B8;margin-top:1px;">Total Fields</div>' +
+    '<div style="display:flex;gap:8px;margin-bottom:22px;flex-wrap:wrap;">' +
+      '<div class="glass-card" style="border-radius:8px;padding:10px 16px;text-align:center;">' +
+        '<div style="font-size:20px;font-weight:700;color:#0F172A;">' + s.fields.length + '</div>' +
+        '<div style="font-size:10.5px;color:#94A3B8;margin-top:2px;letter-spacing:0.03em;">Total</div>' +
       '</div>' +
-      '<div class="glass-card" style="border-radius:6px;padding:8px 14px;text-align:center;">' +
-        '<div style="font-size:18px;font-weight:700;color:#DC2626;">' + reqFields.length + '</div>' +
-        '<div style="font-size:11px;color:#94A3B8;margin-top:1px;">Required</div>' +
+      '<div class="glass-card" style="border-radius:8px;padding:10px 16px;text-align:center;">' +
+        '<div style="font-size:20px;font-weight:700;color:#DC2626;">' + reqFields.length + '</div>' +
+        '<div style="font-size:10.5px;color:#94A3B8;margin-top:2px;letter-spacing:0.03em;">Required</div>' +
       '</div>' +
-      '<div class="glass-card" style="border-radius:6px;padding:8px 14px;text-align:center;">' +
-        '<div style="font-size:18px;font-weight:700;color:#A16207;">' + optFields.length + '</div>' +
-        '<div style="font-size:11px;color:#94A3B8;margin-top:1px;">Optional</div>' +
+      '<div class="glass-card" style="border-radius:8px;padding:10px 16px;text-align:center;">' +
+        '<div style="font-size:20px;font-weight:700;color:#D97706;">' + optFields.length + '</div>' +
+        '<div style="font-size:10.5px;color:#94A3B8;margin-top:2px;letter-spacing:0.03em;">Optional</div>' +
       '</div>' +
-      '<div class="glass-card" style="border-radius:6px;padding:8px 14px;">' +
-        '<div style="font-size:11px;color:#94A3B8;margin-bottom:2px;">Machine Name</div>' +
-        '<code style="font-size:12px;color:#1E1E1E;font-family:ui-monospace,monospace;">' + s.machine + '</code>' +
+      '<div class="glass-card" style="border-radius:8px;padding:10px 16px;">' +
+        '<div style="font-size:10.5px;color:#94A3B8;margin-bottom:3px;letter-spacing:0.03em;">Machine Name</div>' +
+        '<code style="font-size:12px;color:#1E293B;font-family:ui-monospace,monospace;">' + s.machine + '</code>' +
       '</div>' +
     '</div>' +
 
     noteHtml + taxonomyNoteHtml +
 
     // Required fields
-    (reqFields.length ? '<div style="margin-bottom:24px;"><div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;"><span class="badge-req">Required</span><span style="font-size:13px;font-weight:600;color:#1E1E1E;">' + reqFields.length + ' field' + (reqFields.length!==1?'s':'') + '</span></div>' + fieldsTable(reqFields) + '</div>' : '') +
+    (reqFields.length ? '<div style="margin-bottom:24px;"><div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;"><span class="badge-req">Required</span><span style="font-size:13px;font-weight:600;color:#0F172A;">' + reqFields.length + ' field' + (reqFields.length!==1?'s':'') + '</span><div style="flex:1;height:1px;background:#F1F5F9;margin-left:4px;"></div></div>' + fieldsTable(reqFields) + '</div>' : '') +
 
     // Optional fields
-    (optFields.length ? '<div style="margin-bottom:24px;"><div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;"><span class="badge-opt">Optional</span><span style="font-size:13px;font-weight:600;color:#1E1E1E;">' + optFields.length + ' field' + (optFields.length!==1?'s':'') + '</span></div>' + fieldsTable(optFields) + '</div>' : '') +
+    (optFields.length ? '<div style="margin-bottom:24px;"><div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;"><span class="badge-opt">Optional</span><span style="font-size:13px;font-weight:600;color:#0F172A;">' + optFields.length + ' field' + (optFields.length!==1?'s':'') + '</span><div style="flex:1;height:1px;background:#F1F5F9;margin-left:4px;"></div></div>' + fieldsTable(optFields) + '</div>' : '') +
 
     // Navigation between sections
     (function(){
@@ -797,13 +796,13 @@ function renderWelcome() {
   el.innerHTML = Object.keys(groups).map(function(g){
     var items = groups[g];
     var icons = items.slice(0,4).map(function(s){ return '<i class="' + s.icon + '" style="font-size:18px;color:#94A3B8;"></i>'; }).join('');
-    return '<div class="glass-card" onclick="selectSection(\'' + items[0].id + '\')" style="border-radius:8px;padding:14px 16px;cursor:pointer;transition:box-shadow .15s, transform .15s;" onmouseover="this.style.boxShadow=\'0 10px 24px rgba(15,23,42,.12)\';this.style.transform=\'translateY(-1px)\'" onmouseout="this.style.boxShadow=\'0 8px 24px rgba(15,23,42,.08)\';this.style.transform=\'translateY(0)\'">' +
+    return '<div class="glass-card" onclick="selectSection(\'' + items[0].id + '\')" style="border-radius:10px;padding:16px;cursor:pointer;transition:box-shadow .15s, transform .15s, border-color .15s;" onmouseover="this.style.boxShadow=\'0 8px 24px rgba(59,130,246,.1)\';this.style.transform=\'translateY(-2px)\';this.style.borderColor=\'#BFDBFE\'" onmouseout="this.style.boxShadow=\'0 2px 10px rgba(15,23,42,.06)\';this.style.transform=\'translateY(0)\';this.style.borderColor=\'rgba(226,232,240,.9)\'">' +
       '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">' +
-        '<div style="color:#1E1E1E;">' + (GROUP_ICONS[g]||'') + '</div>' +
-        '<span style="font-size:12.5px;font-weight:600;color:#1E1E1E;">' + g + '</span>' +
+        '<div style="color:#3B82F6;">' + (GROUP_ICONS[g]||'') + '</div>' +
+        '<span style="font-size:13px;font-weight:600;color:#0F172A;">' + g + '</span>' +
       '</div>' +
-      '<div style="font-size:11px;color:#94A3B8;">' + items.length + ' content type' + (items.length!==1?'s':'') + '</div>' +
-      '<div style="margin-top:8px;display:flex;gap:6px;align-items:center;">' + icons + '</div>' +
+      '<div style="font-size:11px;color:#94A3B8;margin-bottom:10px;">' + items.length + ' content type' + (items.length!==1?'s':'') + '</div>' +
+      '<div style="display:flex;gap:5px;align-items:center;">' + icons + '</div>' +
     '</div>';
   }).join('');
 }
@@ -829,9 +828,10 @@ document.addEventListener('keydown', function(e){
 });
 
 // ─── INIT ────────────────────────────────────────────────────────────────────
-document.getElementById("stat-total").insertAdjacentHTML(
-  "afterend",
-  '<button onclick="createContentType()" style="margin-top:6px;background:#1E1E1E;color:white;border:1px solid #1E1E1E;padding:4px 8px;border-radius:4px;font-size:10px;cursor:pointer;">Add</button>',
+// Add "New" button to header, after the stats block
+document.querySelector('header').insertAdjacentHTML(
+  "beforeend",
+  '<button onclick="createContentType()" style="margin-left:12px;background:rgba(59,130,246,0.15);color:#93C5FD;border:1px solid rgba(99,162,255,0.3);padding:5px 12px;border-radius:6px;font-size:11.5px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif;letter-spacing:0.02em;transition:background .15s;" onmouseover="this.style.background=\'rgba(59,130,246,0.25)\'" onmouseout="this.style.background=\'rgba(59,130,246,0.15)\'">+ New</button>',
 );
 
 sidebarCollapsed = sessionStorage.getItem("sidebarCollapsed") === "1";
@@ -844,8 +844,10 @@ loadData()
     renderWelcome();
   })
   .catch(function (err) {
-    console.error(err);
-    alert("Unable to load data from API. Start server with `npm run dev:api`.");
+    console.warn("API unavailable, using local data:", err.message);
+    buildSidebar(null);
+    renderWelcome();
+    showToast("API offline — showing local data. Run `npm run dev:api` for live data.", "error");
   });
 </script>
 </body>

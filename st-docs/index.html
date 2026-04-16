@@ -70,6 +70,8 @@ body { font-family: 'Inter', system-ui, sans-serif; background: #F8FAFC; color: 
 
 /* Sidebar group collapse */
 .group-items { overflow: hidden; }
+#sidebar { transition: width 0.18s ease; }
+#main-content { transition: margin-left 0.18s ease; }
 </style>
 </head>
 <body>
@@ -88,8 +90,12 @@ body { font-family: 'Inter', system-ui, sans-serif; background: #F8FAFC; color: 
     </div>
   </div>
 
+  <button id="sidebar-toggle" type="button" style="margin-left:auto;background:#1E293B;border:1px solid #334155;color:#CBD5E1;font-size:12px;padding:6px 10px;border-radius:6px;cursor:pointer;">
+    Hide Menu
+  </button>
+
   <!-- Search -->
-  <div style="margin-left:auto;position:relative;">
+  <div style="position:relative;">
     <svg style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:#64748B;" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
       <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
     </svg>
@@ -128,7 +134,7 @@ body { font-family: 'Inter', system-ui, sans-serif; background: #F8FAFC; color: 
   </aside>
 
   <!-- MAIN CONTENT -->
-  <main style="margin-left:240px;flex:1;padding:32px 40px;min-width:0;">
+  <main id="main-content" style="margin-left:240px;flex:1;padding:32px 40px;min-width:0;">
     <div id="content-area">
 
       <!-- WELCOME STATE -->
@@ -184,6 +190,33 @@ var TYPE_LABELS = {
 // ─── BUILD SIDEBAR ───────────────────────────────────────────────────────────
 var activeId = null;
 var API_BASE = "http://localhost:3001/api";
+var SIDEBAR_WIDTH = 240;
+var sidebarCollapsed = false;
+
+function applySidebarState() {
+  var sidebar = document.getElementById("sidebar");
+  var main = document.getElementById("main-content");
+  var toggle = document.getElementById("sidebar-toggle");
+  if (!sidebar || !main || !toggle) return;
+
+  if (sidebarCollapsed) {
+    sidebar.style.width = "0px";
+    sidebar.style.borderRight = "0";
+    main.style.marginLeft = "0";
+    toggle.textContent = "Show Menu";
+  } else {
+    sidebar.style.width = SIDEBAR_WIDTH + "px";
+    sidebar.style.borderRight = "1px solid #E2E8F0";
+    main.style.marginLeft = SIDEBAR_WIDTH + "px";
+    toggle.textContent = "Hide Menu";
+  }
+}
+
+function toggleSidebar() {
+  sidebarCollapsed = !sidebarCollapsed;
+  sessionStorage.setItem("sidebarCollapsed", sidebarCollapsed ? "1" : "0");
+  applySidebarState();
+}
 
 function updateStats() {
   document.getElementById("stat-total").textContent = String(DATA.length);
@@ -744,6 +777,10 @@ document.getElementById("stat-total").insertAdjacentHTML(
   "afterend",
   '<button onclick="createContentType()" style="margin-top:6px;background:#0369A1;color:white;border:1px solid #0369A1;padding:4px 8px;border-radius:4px;font-size:10px;cursor:pointer;">Add</button>',
 );
+
+sidebarCollapsed = sessionStorage.getItem("sidebarCollapsed") === "1";
+document.getElementById("sidebar-toggle").addEventListener("click", toggleSidebar);
+applySidebarState();
 
 loadData()
   .then(function () {

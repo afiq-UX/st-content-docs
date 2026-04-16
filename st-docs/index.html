@@ -75,8 +75,8 @@ body { font-family: 'Inter', system-ui, sans-serif; background: #F8FAFC; color: 
 #sidebar-toggle {
   position: fixed;
   top: 64px;
-  width: 24px;
-  height: 24px;
+  width: 44px;
+  height: 44px;
   border-radius: 999px;
   border: 1px solid #cbd5e1;
   background: white;
@@ -207,6 +207,7 @@ var TYPE_LABELS = {
 var activeId = null;
 var API_BASE = "http://localhost:3001/api";
 var SIDEBAR_WIDTH = 240;
+var SIDEBAR_COLLAPSED_WIDTH = 64;
 var sidebarCollapsed = false;
 
 function applySidebarState() {
@@ -216,16 +217,16 @@ function applySidebarState() {
   if (!sidebar || !main || !toggle) return;
 
   if (sidebarCollapsed) {
-    sidebar.style.width = "0px";
-    sidebar.style.borderRight = "0";
-    main.style.marginLeft = "0";
-    toggle.style.left = "8px";
+    sidebar.style.width = SIDEBAR_COLLAPSED_WIDTH + "px";
+    sidebar.style.borderRight = "1px solid #E2E8F0";
+    main.style.marginLeft = SIDEBAR_COLLAPSED_WIDTH + "px";
+    toggle.style.left = (SIDEBAR_COLLAPSED_WIDTH - 22) + "px";
     document.getElementById("sidebar-toggle-icon").textContent = "›";
   } else {
     sidebar.style.width = SIDEBAR_WIDTH + "px";
     sidebar.style.borderRight = "1px solid #E2E8F0";
     main.style.marginLeft = SIDEBAR_WIDTH + "px";
-    toggle.style.left = (SIDEBAR_WIDTH - 12) + "px";
+    toggle.style.left = (SIDEBAR_WIDTH - 22) + "px";
     document.getElementById("sidebar-toggle-icon").textContent = "‹";
   }
 }
@@ -234,6 +235,7 @@ function toggleSidebar() {
   sidebarCollapsed = !sidebarCollapsed;
   sessionStorage.setItem("sidebarCollapsed", sidebarCollapsed ? "1" : "0");
   applySidebarState();
+  buildSidebar(document.getElementById("search-input").value.trim().toLowerCase() || null);
 }
 
 function updateStats() {
@@ -597,19 +599,29 @@ function buildSidebar(filter) {
     // Group label
     var gl = document.createElement('div');
     gl.className = 'group-label';
-    gl.innerHTML = (GROUP_ICONS[g]||'') + '&nbsp;&nbsp;' + g;
-    gl.style.cssText = 'font-size:10.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#94A3B8;padding:20px 16px 6px;display:flex;align-items:center;gap:6px;';
+    gl.title = g;
+    gl.innerHTML = sidebarCollapsed ? (GROUP_ICONS[g] || '') : (GROUP_ICONS[g]||'') + '&nbsp;&nbsp;' + g;
+    gl.style.cssText = sidebarCollapsed
+      ? 'font-size:10.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#94A3B8;padding:16px 0 8px;display:flex;align-items:center;justify-content:center;'
+      : 'font-size:10.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#94A3B8;padding:20px 16px 6px;display:flex;align-items:center;gap:6px;';
     nav.appendChild(gl);
 
     items.forEach(function(s) {
       var el = document.createElement('div');
       el.className = 'nav-item' + (s.id === activeId ? ' active' : '');
       el.setAttribute('data-id', s.id);
+      el.title = s.name;
       var req = s.fields.filter(function(f){ return f.status==='required'; }).length;
-      el.innerHTML =
-        '<i class="' + s.icon + '" style="font-size:16px;line-height:1;flex-shrink:0;"></i>' +
-        '<span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + s.name + '</span>' +
-        '<span style="font-size:10px;background:#F1F5F9;color:#94A3B8;padding:1px 6px;border-radius:10px;flex-shrink:0;">' + s.fields.length + '</span>';
+      if (sidebarCollapsed) {
+        el.style.cssText = 'justify-content:center;padding:8px 0;';
+        el.innerHTML = '<i class="' + s.icon + '" style="font-size:17px;line-height:1;"></i>';
+      } else {
+        el.style.cssText = '';
+        el.innerHTML =
+          '<i class="' + s.icon + '" style="font-size:16px;line-height:1;flex-shrink:0;"></i>' +
+          '<span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + s.name + '</span>' +
+          '<span style="font-size:10px;background:#F1F5F9;color:#94A3B8;padding:1px 6px;border-radius:10px;flex-shrink:0;">' + s.fields.length + '</span>';
+      }
       el.onclick = function(){ selectSection(s.id); };
       nav.appendChild(el);
     });

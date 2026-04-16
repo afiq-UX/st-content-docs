@@ -72,6 +72,23 @@ body { font-family: 'Inter', system-ui, sans-serif; background: #F8FAFC; color: 
 .group-items { overflow: hidden; }
 #sidebar { transition: width 0.18s ease; }
 #main-content { transition: margin-left 0.18s ease; }
+#sidebar-toggle {
+  position: fixed;
+  top: 64px;
+  width: 24px;
+  height: 24px;
+  border-radius: 999px;
+  border: 1px solid #cbd5e1;
+  background: white;
+  color: #334155;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 120;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.15);
+  transition: left 0.18s ease, transform 0.18s ease;
+}
 </style>
 </head>
 <body>
@@ -90,12 +107,8 @@ body { font-family: 'Inter', system-ui, sans-serif; background: #F8FAFC; color: 
     </div>
   </div>
 
-  <button id="sidebar-toggle" type="button" style="margin-left:auto;background:#1E293B;border:1px solid #334155;color:#CBD5E1;font-size:12px;padding:6px 10px;border-radius:6px;cursor:pointer;">
-    Hide Menu
-  </button>
-
   <!-- Search -->
-  <div style="position:relative;">
+  <div style="margin-left:auto;position:relative;">
     <svg style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:#64748B;" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
       <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
     </svg>
@@ -132,6 +145,9 @@ body { font-family: 'Inter', system-ui, sans-serif; background: #F8FAFC; color: 
       <div style="color:#94A3B8;font-size:12px;">No results found</div>
     </div>
   </aside>
+  <button id="sidebar-toggle" type="button" aria-label="Toggle menu" title="Toggle menu">
+    <span id="sidebar-toggle-icon">‹</span>
+  </button>
 
   <!-- MAIN CONTENT -->
   <main id="main-content" style="margin-left:240px;flex:1;padding:32px 40px;min-width:0;">
@@ -203,12 +219,14 @@ function applySidebarState() {
     sidebar.style.width = "0px";
     sidebar.style.borderRight = "0";
     main.style.marginLeft = "0";
-    toggle.textContent = "Show Menu";
+    toggle.style.left = "8px";
+    document.getElementById("sidebar-toggle-icon").textContent = "›";
   } else {
     sidebar.style.width = SIDEBAR_WIDTH + "px";
     sidebar.style.borderRight = "1px solid #E2E8F0";
     main.style.marginLeft = SIDEBAR_WIDTH + "px";
-    toggle.textContent = "Hide Menu";
+    toggle.style.left = (SIDEBAR_WIDTH - 12) + "px";
+    document.getElementById("sidebar-toggle-icon").textContent = "‹";
   }
 }
 

@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ST Content Docs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] }
+    }
+  }
+}
+</script>
+<style>
+* { box-sizing: border-box; }
+body { font-family: 'Inter', system-ui, sans-serif; background: #F8FAFC; color: #0F172A; margin: 0; }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 3px; }
+
+/* Sidebar nav item */
+.nav-item {
+  display: flex; align-items: center; gap: 8px;
+  padding: 7px 16px; cursor: pointer; font-size: 13px; font-weight: 500;
+  color: #475569; border-radius: 0; transition: all 0.15s ease;
+  border-left: 2px solid transparent; user-select: none;
+}
+.nav-item:hover { background: #F1F5F9; color: #0F172A; }
+.nav-item.active { background: #EFF6FF; color: #0369A1; border-left-color: #0369A1; font-weight: 600; }
+
+/* Group label */
+.group-label {
+  font-size: 10.5px; font-weight: 700; letter-spacing: 0.09em;
+  text-transform: uppercase; color: #94A3B8;
+  padding: 20px 16px 6px; display: flex; align-items: center; gap-6px;
+}
+
+/* Field type badge */
+.type-pill {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 11px; font-weight: 500; padding: 2px 8px;
+  border-radius: 4px; background: #F1F5F9; color: #475569;
+  border: 1px solid #E2E8F0; white-space: nowrap;
+}
+
+/* Status badge */
+.badge-req { background: #FEF2F2; color: #DC2626; border: 1px solid #FECACA; font-size: 11px; font-weight: 600; padding: 2px 7px; border-radius: 4px; }
+.badge-opt { background: #F0F9FF; color: #0369A1; border: 1px solid #BAE6FD; font-size: 11px; font-weight: 500; padding: 2px 7px; border-radius: 4px; }
+
+/* Note boxes */
+.note-tip  { background: #FFFBEB; border: 1px solid #FDE68A; border-left: 3px solid #F59E0B; }
+.note-info { background: #EFF6FF; border: 1px solid #BFDBFE; border-left: 3px solid #3B82F6; }
+.note-warn { background: #FFF7ED; border: 1px solid #FED7AA; border-left: 3px solid #F97316; }
+
+/* Content fade */
+#content-area { transition: opacity 0.12s ease; }
+#content-area.fading { opacity: 0; }
+
+/* Search highlight */
+.nav-item.hidden-item { display: none; }
+
+/* Sidebar group collapse */
+.group-items { overflow: hidden; }
+</style>
+</head>
+<body>
+
+<!-- TOP HEADER -->
+<header style="position:fixed;top:0;left:0;right:0;height:52px;background:#0F172A;z-index:100;display:flex;align-items:center;padding:0 20px;gap:16px;border-bottom:1px solid #1E293B;">
+  <div style="display:flex;align-items:center;gap:10px;flex-shrink:0;">
+    <div style="width:30px;height:30px;background:#0369A1;border-radius:6px;display:flex;align-items:center;justify-content:center;">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+      </svg>
+    </div>
+    <div>
+      <div style="color:white;font-size:13px;font-weight:700;line-height:1.2;font-family:'Space Grotesk',sans-serif;">Suruhanjaya Tenaga</div>
+      <div style="color:#64748B;font-size:11px;line-height:1.2;">Content Type Reference</div>
+    </div>
+  </div>
+
+  <!-- Search -->
+  <div style="margin-left:auto;position:relative;">
+    <svg style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:#64748B;" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+    </svg>
+    <input id="search-input" type="text" placeholder="Search content types…"
+      style="background:#1E293B;border:1px solid #334155;color:white;font-size:12.5px;font-family:Inter,sans-serif;padding:6px 12px 6px 30px;border-radius:6px;width:220px;outline:none;"
+      onfocus="this.style.borderColor='#0369A1'" onblur="this.style.borderColor='#334155'"
+    >
+  </div>
+
+  <!-- Stats -->
+  <div style="display:flex;align-items:center;gap:16px;flex-shrink:0;">
+    <div style="text-align:center;">
+      <div style="color:white;font-size:15px;font-weight:700;line-height:1;" id="stat-total">19</div>
+      <div style="color:#64748B;font-size:10px;margin-top:1px;">Types</div>
+    </div>
+    <div style="width:1px;height:24px;background:#1E293B;"></div>
+    <div style="text-align:center;">
+      <div style="color:white;font-size:15px;font-weight:700;line-height:1;">6</div>
+      <div style="color:#64748B;font-size:10px;margin-top:1px;">Groups</div>
+    </div>
+    <div style="width:1px;height:24px;background:#1E293B;"></div>
+    <div style="color:#64748B;font-size:11px;">v2.0</div>
+  </div>
+</header>
+
+<!-- LAYOUT -->
+<div style="display:flex;min-height:100vh;padding-top:52px;">
+
+  <!-- SIDEBAR -->
+  <aside id="sidebar" style="position:fixed;top:52px;left:0;bottom:0;width:240px;background:white;border-right:1px solid #E2E8F0;overflow-y:auto;z-index:90;">
+    <div id="sidebar-nav"></div>
+    <!-- Empty search state -->
+    <div id="no-results" style="display:none;padding:24px 16px;text-align:center;">
+      <div style="color:#94A3B8;font-size:12px;">No results found</div>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main style="margin-left:240px;flex:1;padding:32px 40px;min-width:0;">
+    <div id="content-area">
+
+      <!-- WELCOME STATE -->
+      <div id="welcome-view">
+        <div style="max-width:640px;margin:40px auto;text-align:center;">
+          <div style="width:56px;height:56px;background:#EFF6FF;border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#0369A1" stroke-width="1.8">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+              <line x1="16" y1="13" x2="8" y2="13"/>
+              <line x1="16" y1="17" x2="8" y2="17"/>
+              <polyline points="10 9 9 9 8 9"/>
+            </svg>
+          </div>
+          <h1 style="font-size:22px;font-weight:700;color:#0F172A;margin:0 0 10px;font-family:'Space Grotesk',sans-serif;">Content Type Reference</h1>
+          <p style="color:#64748B;font-size:14px;line-height:1.6;margin:0 0 32px;">
+            Documentation for all 19 content types used in the ST website. Select a content type from the sidebar to view its fields, requirements, and usage notes.
+          </p>
+          <!-- Group overview cards -->
+          <div id="group-overview" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;text-align:left;"></div>
+        </div>
+      </div>
+
+      <!-- SECTION DETAIL VIEW -->
+      <div id="section-view" style="display:none;max-width:800px;"></div>
+
+    </div>
+  </main>
+</div>
+
+<script>
+// ─── DATA ───────────────────────────────────────────────────────────────────
+var DATA = [{id:"newsroom",name:"Newsroom",machine:"newsroom",group:"Newsroom & Media",icon:"ti ti-news",color:"#FDE8E8",description:"The main content type for all news-related posts — press releases, events, announcements, workshops, ST statements, and media articles.",note:{kind:"tip",text:"Always set <strong>News Type</strong> and <strong>Publish Date</strong> — these are required for the post to appear in the right section."},taxonomyNote:"News Type controls where this post appears. Options: Press Releases, Announcement / Notice, ST Statements, ST@Media, Media Articles, Events, Workshops, News",fields:[{label:"Title",machine:"title",hint:"The headline of the article or announcement.",status:"required",type:"text"},{label:"Publish Date",machine:"field_publish_date",hint:"The official date shown as 'Issued' on the listing page.",status:"required",type:"date"},{label:"News Type",machine:"field_news_type",hint:"Pick a category (e.g. Events, Press Releases). Determines which section it appears under in Newsroom.",status:"required",type:"taxonomy"},{label:"Description",machine:"field_description",hint:"Short teaser text for listing cards. Plain text only.",status:"optional",type:"plain-text"},{label:"Content",machine:"field_content",hint:"Main body of the article. Supports rich text, images, and formatting.",status:"optional",type:"rich-text"},{label:"Featured Image",machine:"field_featured_image",hint:"Main image shown on listing cards and article header. Upload from Media library.",status:"optional",type:"media-image"},{label:"File / Attachment",machine:"field_file",hint:"Attach a PDF (e.g. press release document). Shown as a download button.",status:"optional",type:"media-doc"},{label:"Location",machine:"field_location",hint:"For Events only — enter the venue or city (e.g. Putrajaya).",status:"optional",type:"plain-text"},{label:"External Links",machine:"field_external_links",hint:"Link to an external source. Enter the URL and a display label.",status:"optional",type:"link"},{label:"Featured",machine:"field_featured",hint:"Tick to feature this post as the large hero card in the News section.",status:"optional",type:"boolean"},{label:"Tags",machine:"field_tags",hint:"Add tags to group related content. Multiple tags allowed.",status:"optional",type:"taxonomy",multiple:true}]},{id:"highlights",name:"Highlights",machine:"highlights",group:"Newsroom & Media",icon:"ti ti-star",color:"#FFF3E0",description:"Featured stories shown in the Highlights carousel on the homepage. Used for high-priority content needing extra visibility.",fields:[{label:"Title",machine:"title",hint:"Headline for the highlight card.",status:"required",type:"text"},{label:"Body",machine:"field_body",hint:"Main content. Supports rich text and a short summary.",status:"optional",type:"rich-text"},{label:"Featured Image",machine:"field_featured_image",hint:"Visual image shown on the highlight card. Use a high-quality landscape image.",status:"optional",type:"media-image"},{label:"Links",machine:"field_links",hint:"Call-to-action links (e.g. 'Read more', 'Register here'). Multiple links allowed.",status:"optional",type:"link",multiple:true},{label:"Tags",machine:"field_h_tags",hint:"Assign a Highlights Tag to categorise this highlight internally.",status:"optional",type:"taxonomy"}]},{id:"faq",name:"FAQ",machine:"faq",group:"Knowledge & Resources",icon:"ti ti-help",color:"#E8F7EE",description:"Frequently asked questions. Each entry is a single question-and-answer pair, organised by category and topic.",note:{kind:"info",text:"<strong>FAQ Category</strong> and <strong>Topic Tag</strong> control how this FAQ is grouped and filtered on the FAQ page. Both can have multiple values."},fields:[{label:"Title (Question)",machine:"title",hint:"Write as a full question, e.g. 'How do I apply for a license?'",status:"required",type:"text"},{label:"Answer",machine:"field_answers",hint:"The full answer. Supports rich text, tables, and links.",status:"optional",type:"rich-text"},{label:"Question (Long)",machine:"field_question_long",hint:"Use when the question needs more context or multi-line explanation.",status:"optional",type:"plain-text"},{label:"Question with Images",machine:"field_question_with_images",hint:"Use when the question needs supporting diagrams or charts.",status:"optional",type:"rich-text"},{label:"FAQ Category",machine:"field_faq_category",hint:"Assign categories. Appears as filter tabs on the FAQ page. Multiple allowed.",status:"optional",type:"taxonomy",multiple:true},{label:"Topic Tag",machine:"field_topic_tag",hint:"Assigns this FAQ to a section in the FAQ hierarchy.",status:"optional",type:"taxonomy"},{label:"Topic Reference",machine:"field_topic_reference",hint:"Link to a related Topic page on the site.",status:"optional",type:"content-ref"},{label:"File Attachment",machine:"field_file_attachment",hint:"Attach supporting documents (PDFs, forms). Multiple files allowed.",status:"optional",type:"media-doc",multiple:true},{label:"External Links",machine:"field_external_links",hint:"Link to an external resource relevant to this FAQ.",status:"optional",type:"link"}]},{id:"resource",name:"Resource",machine:"resource",group:"Knowledge & Resources",icon:"ti ti-file-description",color:"#EEF2F7",description:"Downloadable publications, reports, and magazines. Appears in Publications and Resources listing pages.",fields:[{label:"Title",machine:"title",hint:"Publication title, e.g. 'Energy Malaysia, Volume 27, 2025'.",status:"required",type:"text"},{label:"Summary",machine:"field_summary",hint:"Short description shown on listing cards.",status:"optional",type:"plain-text"},{label:"Resource Type",machine:"field_resource_type",hint:"Select the type (e.g. Magazine, Annual Report). Shown as a badge on the card.",status:"optional",type:"taxonomy"},{label:"Publication Date",machine:"field_publication_date",hint:"The official date this resource was issued.",status:"optional",type:"date"},{label:"Cover Image",machine:"field_featured_image",hint:"Upload the cover thumbnail shown on listing cards.",status:"optional",type:"media-image"},{label:"File",machine:"field_file",hint:"Upload the PDF or document for download.",status:"optional",type:"media-doc"},{label:"External Link",machine:"field_external_links",hint:"Use if the resource is hosted externally instead of uploaded.",status:"optional",type:"link"},{label:"Topic Reference",machine:"field_topic_reference",hint:"Link to a related section/topic page on the site.",status:"optional",type:"content-ref"}]},{id:"policies",name:"Policies",machine:"policies",group:"Knowledge & Resources",icon:"ti ti-clipboard-list",color:"#FDE8E8",description:"Official regulatory policies, guidelines, and frameworks with attachments.",fields:[{label:"Title",machine:"title",hint:"Name of the policy or guideline.",status:"required",type:"text"},{label:"Description",machine:"field_body",hint:"Full description or content. Supports rich text and a summary.",status:"optional",type:"rich-text"},{label:"Policy Category",machine:"field_policy_categories",hint:"Assign to the relevant category for grouping and filtering.",status:"optional",type:"taxonomy"},{label:"Featured Image",machine:"field_featured_image",hint:"Optional cover image for this policy entry.",status:"optional",type:"media-image"},{label:"File Attachment",machine:"field_file_attachment",hint:"Attach the policy document(s) for download. Multiple files allowed.",status:"optional",type:"media-doc",multiple:true}]},{id:"consultation_hub",name:"Consultation Hub",machine:"consultation_hub",group:"Knowledge & Resources",icon:"ti ti-handshake",color:"#E8F7EE",description:"Public consultation documents and regulatory notices requiring attached key documents.",fields:[{label:"Title",machine:"title",hint:"Title of the consultation document or notice.",status:"required",type:"text"},{label:"Body",machine:"field_body",hint:"Full content of the consultation. Supports rich text and a summary.",status:"optional",type:"rich-text"},{label:"Key Documents",machine:"field_key_documents",hint:"Upload the consultation documents. Multiple files allowed.",status:"optional",type:"media-doc",multiple:true}]},{id:"topic",name:"Topic",machine:"topic",group:"Knowledge & Resources",icon:"ti ti-folders",color:"#EEF2F7",description:"Sub-pages that sit under a main Page. Used to organise detailed subject areas under a parent section.",fields:[{label:"Title",machine:"title",hint:"Name of the topic.",status:"required",type:"text"},{label:"Introduction",machine:"field_introduction",hint:"Brief intro paragraph shown at the top of the page.",status:"optional",type:"plain-text"},{label:"Parent Page",machine:"field_parent",hint:"Link this topic to its parent Page (the main section it belongs under).",status:"optional",type:"content-ref"},{label:"File Attachment",machine:"field_file_attachment",hint:"Attach any supporting documents. Multiple files allowed.",status:"optional",type:"media-doc",multiple:true}]},{id:"page",name:"Page",machine:"page",group:"Pages & Navigation",icon:"ti ti-layout",color:"#F0EDE8",description:"Main section landing pages and standalone content pages (e.g. Stakeholders, Security). Layout managed via Layout Builder.",note:{kind:"warn",text:"This content type uses <strong>Layout Builder</strong>. Avoid editing the Layout section — contact the dev team for structural page changes."},fields:[{label:"Title",machine:"title",hint:"Page title shown as the main heading.",status:"required",type:"text"},{label:"Description",machine:"field_description",hint:"Short descriptive text used in SEO and page intros.",status:"required",type:"plain-text"},{label:"Content",machine:"field_content",hint:"Main body content in rich text.",status:"optional",type:"rich-text"},{label:"Featured Image",machine:"field_featured_image",hint:"Hero or banner image for the page.",status:"optional",type:"media-image"},{label:"Links",machine:"field_links",hint:"Additional links shown on the page. Multiple allowed.",status:"optional",type:"link",multiple:true},{label:"Tags",machine:"field_tags",hint:"Tag this page for grouping with related content.",status:"optional",type:"taxonomy",multiple:true}]},{id:"page_with_links",name:"Page with Links",machine:"page_with_links",group:"Pages & Navigation",icon:"ti ti-link",color:"#FEF9E7",description:"A lighter page type for sections that are primarily a curated list of links with a short intro.",fields:[{label:"Title",machine:"title",hint:"Page title.",status:"required",type:"text"},{label:"Introduction",machine:"field_intro",hint:"Short formatted intro paragraph shown at the top.",status:"optional",type:"rich-text"},{label:"Long Introduction",machine:"field_long_introduction",hint:"More detailed intro if needed.",status:"optional",type:"rich-text"},{label:"External Links",machine:"field_links",hint:"The list of links shown on this page. Multiple allowed.",status:"optional",type:"link",multiple:true}]},{id:"about_us",name:"About Us",machine:"about_us",group:"Pages & Navigation",icon:"ti ti-building",color:"#FDE8E8",description:"Content for the About Us section pages — organisational background, mission, and vision.",fields:[{label:"Title",machine:"title",hint:"Section title.",status:"required",type:"text"},{label:"Body",machine:"field_body",hint:"Main content with rich text and optional summary.",status:"optional",type:"rich-text"},{label:"Image",machine:"field_image",hint:"Supporting image for this About Us section.",status:"optional",type:"media-image"}]},{id:"quicklinks",name:"Quicklinks",machine:"quicklinks",group:"Pages & Navigation",icon:"ti ti-bolt",color:"#E8F7EE",description:"External agency or partner links shown in the Quicklinks section on the homepage, grouped by category.",fields:[{label:"Agency Name",machine:"title",hint:"Name of the agency or organisation.",status:"required",type:"text"},{label:"Description",machine:"field_description",hint:"One-line description shown below the agency name.",status:"optional",type:"plain-text"},{label:"Logo",machine:"field_logo",hint:"Upload the agency logo used as the thumbnail.",status:"optional",type:"media-image"},{label:"Link",machine:"field_links",hint:"URL of the agency website. Multiple links allowed.",status:"optional",type:"link",multiple:true},{label:"Quicklink Category",machine:"field_quicklink_category",hint:"Which group this belongs to (e.g. Government & Policy, National Energy Utilities).",status:"optional",type:"taxonomy"},{label:"Topic",machine:"field_topic",hint:"Link to a related page/topic on the site if applicable.",status:"optional",type:"content-ref"}]},{id:"management_team",name:"Management Team",machine:"management_team",group:"People & Organisation",icon:"ti ti-user",color:"#EEF2F7",description:"Profiles for senior management and leadership team members shown in the Leadership section.",fields:[{label:"Full Name",machine:"title",hint:"The person's full name.",status:"required",type:"text"},{label:"Profile Picture",machine:"field_profile_picture",hint:"Headshot photo. Use a consistent portrait format.",status:"optional",type:"media-image"},{label:"Position / Title",machine:"field_positions",hint:"Select the job title from the Positions list.",status:"optional",type:"taxonomy"},{label:"Division",machine:"field_division",hint:"Select the division this person belongs to.",status:"optional",type:"taxonomy"},{label:"Description / Bio",machine:"field_body",hint:"Biography or description. Supports rich text and a short summary.",status:"optional",type:"rich-text"},{label:"Email Address",machine:"field_email_address",hint:"Official email address.",status:"optional",type:"email"}]},{id:"energy_commission_members",name:"EC Members",machine:"energy_commission_members",group:"People & Organisation",icon:"ti ti-award",color:"#FDE8E8",description:"Profiles for appointed Energy Commission board members. Includes an appointment date.",fields:[{label:"Full Name",machine:"title",hint:"The member's full name.",status:"required",type:"text"},{label:"Profile Picture",machine:"field_profile_picture",hint:"Headshot photo in portrait format.",status:"optional",type:"media-image"},{label:"Position / Title",machine:"field_positions",hint:"Select the member's role/title from the Positions list.",status:"optional",type:"taxonomy"},{label:"Date of Appointment",machine:"field_date_of_appointment",hint:"Enter the official appointment date as plain text (e.g. '1 January 2023').",status:"optional",type:"plain-text"},{label:"Description / Bio",machine:"field_body",hint:"Biography or description. Supports rich text and a short summary.",status:"optional",type:"rich-text"}]},{id:"staff",name:"Staff",machine:"staff",group:"People & Organisation",icon:"ti ti-users",color:"#F0EDE8",description:"Staff directory entries for ST employees. Used for internal contact listings.",fields:[{label:"Full Name",machine:"title",hint:"The staff member's full name.",status:"required",type:"text"},{label:"Position",machine:"field_positions",hint:"Select from the Positions taxonomy.",status:"optional",type:"taxonomy"},{label:"Division",machine:"field_division",hint:"Select the division this person belongs to.",status:"optional",type:"taxonomy"},{label:"Section",machine:"field_section",hint:"Select the specific section within the division.",status:"optional",type:"taxonomy"},{label:"Email Address",machine:"field_email_address",hint:"Official ST email address.",status:"optional",type:"email"},{label:"Telephone",machine:"field_telephone",hint:"Direct phone number including extension.",status:"optional",type:"phone"}]},{id:"section_contact",name:"Section Contact",machine:"section_contact",group:"People & Organisation",icon:"ti ti-mail",color:"#E8F7EE",description:"Contact information for a specific department or section.",fields:[{label:"Section Name",machine:"title",hint:"Name of the section or department.",status:"required",type:"text"},{label:"Division",machine:"field_division",hint:"Select the division this contact belongs to.",status:"optional",type:"taxonomy"},{label:"Email Address",machine:"field_email_address",hint:"Contact email for this section.",status:"optional",type:"email"}]},{id:"career",name:"Career",machine:"career",group:"Procurement & Licensing",icon:"ti ti-briefcase",color:"#FEF9E7",description:"Job vacancy and career opportunity postings with application date range and attachments.",fields:[{label:"Job Title",machine:"title",hint:"Name of the position or vacancy.",status:"required",type:"text"},{label:"Overview",machine:"field_overview",hint:"Full job description and requirements. Supports rich text.",status:"optional",type:"rich-text"},{label:"Application Period",machine:"field_date_range",hint:"Set the opening and closing dates for applications.",status:"optional",type:"date-range"},{label:"Attachment",machine:"field_file_attachment",hint:"Upload related documents (job description PDF, application form). Multiple allowed.",status:"optional",type:"media-doc",multiple:true}]},{id:"tender_quotation",name:"Tender / Quotation",machine:"tender_quotation",group:"Procurement & Licensing",icon:"ti ti-file-invoice",color:"#FDE8E8",description:"Procurement tender and quotation notices with reference codes, dates, and attachments.",fields:[{label:"Title",machine:"title",hint:"Full name or description of the tender/quotation.",status:"required",type:"text"},{label:"Reference Code",machine:"field_code",hint:"Official reference number (e.g. ST/PRO/2026/001).",status:"optional",type:"plain-text"},{label:"Type",machine:"field_type",hint:"Select whether this is a Tender or Quotation.",status:"optional",type:"dropdown"},{label:"Submission Period",machine:"field_start_and_end_date",hint:"Opening and closing dates for submission.",status:"optional",type:"date-range"},{label:"Notice Date",machine:"field_notice_date",hint:"Date the notice was officially issued.",status:"optional",type:"date"},{label:"Collection Date",machine:"field_collection_date",hint:"Deadline for document collection if applicable.",status:"optional",type:"date"},{label:"Advertisement Doc",machine:"field_ad_attachment",hint:"Upload the tender/quotation advertisement document.",status:"optional",type:"file"},{label:"Notice Document",machine:"field_notice_attachment",hint:"Upload the official notice document.",status:"optional",type:"file"}]},{id:"public_distribution_licensee",name:"Public Distribution Licensee",machine:"public_distribution_licensee",group:"Procurement & Licensing",icon:"ti ti-plug",color:"#EEF2F7",description:"Registry entries for licensed public electricity distribution companies.",fields:[{label:"Licensee Name",machine:"title",hint:"Full legal name of the licensee company.",status:"required",type:"text"},{label:"Address",machine:"field_licensee_address",hint:"Registered business address.",status:"optional",type:"plain-text"},{label:"Capacity (MW)",machine:"field_capacity",hint:"Licensed distribution capacity in megawatts. Enter as a number.",status:"optional",type:"number"},{label:"License Start Date",machine:"field_start_date",hint:"Date the license was granted.",status:"optional",type:"date"},{label:"License End Date",machine:"field_end_date",hint:"Date the license expires.",status:"optional",type:"date"}]},{id:"office_locations",name:"Office Locations",machine:"office_locations",group:"Location",icon:"ti ti-map-pin",color:"#FEF9E7",description:"ST office and branch contact details including address, phone, email, operating hours, and map pin.",fields:[{label:"Office Name",machine:"title",hint:"Name of the office or branch (e.g. 'ST Putrajaya HQ').",status:"required",type:"text"},{label:"Address",machine:"field_address",hint:"Full street address (street, city, postcode, state).",status:"optional",type:"address"},{label:"Telephone",machine:"field_telephone",hint:"Main phone number for this office.",status:"optional",type:"phone"},{label:"Fax",machine:"field_fax",hint:"Fax number if applicable.",status:"optional",type:"phone"},{label:"Email Address",machine:"field_email_address",hint:"Contact email for this office.",status:"optional",type:"email"},{label:"Operating Hours",machine:"field_operating_hours",hint:"E.g. 'Monday – Friday: 8:00am – 5:00pm'.",status:"optional",type:"plain-text"},{label:"Office Type",machine:"field_office_type",hint:"Select the type of office (HQ, Regional, Branch).",status:"optional",type:"taxonomy"},{label:"State",machine:"field_state",hint:"Select the Malaysian state this office is in.",status:"optional",type:"taxonomy"},{label:"Map Coordinates",machine:"field_lat_long",hint:"Latitude/longitude for the map pin. Contact dev team if unsure.",status:"optional",type:"geofield"}]}];
+
+// ─── GROUP CONFIG ────────────────────────────────────────────────────────────
+var GROUP_ICONS = {
+  "Newsroom & Media":       '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2zm0 0H4a2 2 0 0 1-2-2V6"/><line x1="16" y1="8" x2="10" y2="8"/><line x1="16" y1="12" x2="10" y2="12"/><line x1="16" y1="16" x2="10" y2="16"/></svg>',
+  "Knowledge & Resources":  '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>',
+  "Pages & Navigation":     '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>',
+  "People & Organisation":  '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
+  "Procurement & Licensing":'<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>',
+  "Location":               '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>'
+};
+
+var TYPE_LABELS = {
+  "text":"Text","plain-text":"Plain Text","rich-text":"Rich Text","date":"Date",
+  "date-range":"Date Range","taxonomy":"Taxonomy","media-image":"Image",
+  "media-doc":"Document","link":"Link","boolean":"Toggle","content-ref":"Content Ref",
+  "email":"Email","phone":"Phone","number":"Number","address":"Address",
+  "geofield":"Geo","dropdown":"Dropdown","file":"File"
+};
+
+// ─── BUILD SIDEBAR ───────────────────────────────────────────────────────────
+var activeId = null;
+
+function buildSidebar(filter) {
+  var nav = document.getElementById('sidebar-nav');
+  nav.innerHTML = '';
+  var groups = {};
+  DATA.forEach(function(s) {
+    if (!groups[s.group]) groups[s.group] = [];
+    groups[s.group].push(s);
+  });
+
+  var hasAny = false;
+  Object.keys(groups).forEach(function(g) {
+    var items = groups[g];
+    if (filter) items = items.filter(function(s){ return s.name.toLowerCase().includes(filter) || s.group.toLowerCase().includes(filter); });
+    if (!items.length) return;
+    hasAny = true;
+
+    // Group label
+    var gl = document.createElement('div');
+    gl.className = 'group-label';
+    gl.innerHTML = (GROUP_ICONS[g]||'') + '&nbsp;&nbsp;' + g;
+    gl.style.cssText = 'font-size:10.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#94A3B8;padding:20px 16px 6px;display:flex;align-items:center;gap:6px;';
+    nav.appendChild(gl);
+
+    items.forEach(function(s) {
+      var el = document.createElement('div');
+      el.className = 'nav-item' + (s.id === activeId ? ' active' : '');
+      el.setAttribute('data-id', s.id);
+      var req = s.fields.filter(function(f){ return f.status==='required'; }).length;
+      el.innerHTML =
+        '<i class="' + s.icon + '" style="font-size:16px;line-height:1;flex-shrink:0;"></i>' +
+        '<span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + s.name + '</span>' +
+        '<span style="font-size:10px;background:#F1F5F9;color:#94A3B8;padding:1px 6px;border-radius:10px;flex-shrink:0;">' + s.fields.length + '</span>';
+      el.onclick = function(){ selectSection(s.id); };
+      nav.appendChild(el);
+    });
+  });
+
+  document.getElementById('no-results').style.display = hasAny ? 'none' : 'block';
+}
+
+// ─── SELECT SECTION ──────────────────────────────────────────────────────────
+function selectSection(id) {
+  activeId = id;
+  var s = DATA.find(function(x){ return x.id === id; });
+  if (!s) return;
+
+  // Update sidebar active
+  document.querySelectorAll('.nav-item').forEach(function(el){
+    el.classList.toggle('active', el.getAttribute('data-id') === id);
+  });
+
+  var area = document.getElementById('content-area');
+  area.classList.add('fading');
+  setTimeout(function(){
+    renderSection(s);
+    area.classList.remove('fading');
+  }, 100);
+
+  // Scroll sidebar item into view
+  var activeEl = document.querySelector('.nav-item.active');
+  if (activeEl) activeEl.scrollIntoView({block:'nearest'});
+}
+
+function renderSection(s) {
+  document.getElementById('welcome-view').style.display = 'none';
+  var view = document.getElementById('section-view');
+  view.style.display = 'block';
+
+  var reqFields = s.fields.filter(function(f){ return f.status==='required'; });
+  var optFields = s.fields.filter(function(f){ return f.status==='optional'; });
+
+  // Note HTML
+  var noteHtml = '';
+  if (s.note) {
+    var noteClass = 'note-' + s.note.kind;
+    var noteIconClass = s.note.kind === 'tip' ? 'ti ti-bulb' : s.note.kind === 'warn' ? 'ti ti-alert-triangle' : 'ti ti-info-circle';
+    noteHtml = '<div class="' + noteClass + '" style="border-radius:6px;padding:10px 14px;margin-bottom:20px;font-size:13px;line-height:1.6;color:#374151;">' +
+      '<i class="' + noteIconClass + '" style="font-size:14px;margin-right:6px;vertical-align:middle;"></i>' + s.note.text + '</div>';
+  }
+
+  var taxonomyNoteHtml = '';
+  if (s.taxonomyNote) {
+    taxonomyNoteHtml = '<div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:6px;padding:10px 14px;margin-bottom:20px;font-size:12.5px;color:#475569;line-height:1.6;">' +
+      '<span style="font-weight:600;color:#0F172A;">Taxonomy note: </span>' + s.taxonomyNote + '</div>';
+  }
+
+  // Fields table
+  function fieldsTable(fields) {
+    if (!fields.length) return '<p style="color:#94A3B8;font-size:13px;font-style:italic;">None</p>';
+    var rows = fields.map(function(f){
+      var typeLabel = TYPE_LABELS[f.type] || f.type;
+      var multi = f.multiple ? ' <span style="font-size:10px;background:#F0FDF4;color:#16A34A;border:1px solid #BBF7D0;padding:1px 5px;border-radius:3px;margin-left:3px;">×multi</span>' : '';
+      return '<tr style="border-bottom:1px solid #F1F5F9;">' +
+        '<td style="padding:10px 12px;font-size:13px;font-weight:500;color:#0F172A;white-space:nowrap;">' + f.label + multi + '</td>' +
+        '<td style="padding:10px 12px;"><code style="font-size:11px;background:#F8FAFC;color:#64748B;padding:2px 6px;border-radius:3px;font-family:ui-monospace,monospace;border:1px solid #E2E8F0;">' + f.machine + '</code></td>' +
+        '<td style="padding:10px 12px;"><span class="type-pill">' + typeLabel + '</span></td>' +
+        '<td style="padding:10px 12px;font-size:12.5px;color:#64748B;line-height:1.5;">' + f.hint + '</td>' +
+        '</tr>';
+    }).join('');
+    return '<div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;background:white;border:1px solid #E2E8F0;border-radius:8px;overflow:hidden;">' +
+      '<thead><tr style="background:#F8FAFC;">' +
+      '<th style="padding:9px 12px;font-size:11px;font-weight:600;color:#64748B;text-align:left;letter-spacing:.04em;text-transform:uppercase;">Field</th>' +
+      '<th style="padding:9px 12px;font-size:11px;font-weight:600;color:#64748B;text-align:left;letter-spacing:.04em;text-transform:uppercase;">Machine Name</th>' +
+      '<th style="padding:9px 12px;font-size:11px;font-weight:600;color:#64748B;text-align:left;letter-spacing:.04em;text-transform:uppercase;">Type</th>' +
+      '<th style="padding:9px 12px;font-size:11px;font-weight:600;color:#64748B;text-align:left;letter-spacing:.04em;text-transform:uppercase;">Hint</th>' +
+      '</tr></thead><tbody>' + rows + '</tbody></table></div>';
+  }
+
+  view.innerHTML =
+    // Header
+    '<div style="display:flex;align-items:flex-start;gap:14px;margin-bottom:24px;">' +
+      '<div style="width:48px;height:48px;border-radius:10px;background:' + s.color + ';display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="' + s.icon + '" style="font-size:24px;color:#475569;"></i></div>' +
+      '<div style="flex:1;">' +
+        '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">' +
+          '<h1 style="font-size:20px;font-weight:700;color:#0F172A;margin:0;font-family:\'Space Grotesk\',sans-serif;">' + s.name + '</h1>' +
+          '<span style="font-size:11px;background:#F1F5F9;color:#64748B;padding:2px 8px;border-radius:4px;border:1px solid #E2E8F0;">' + s.group + '</span>' +
+        '</div>' +
+        '<p style="color:#64748B;font-size:13.5px;margin:6px 0 0;line-height:1.6;">' + s.description + '</p>' +
+      '</div>' +
+    '</div>' +
+
+    // Meta row
+    '<div style="display:flex;gap:8px;margin-bottom:24px;flex-wrap:wrap;">' +
+      '<div style="background:white;border:1px solid #E2E8F0;border-radius:6px;padding:8px 14px;text-align:center;">' +
+        '<div style="font-size:18px;font-weight:700;color:#0F172A;">' + s.fields.length + '</div>' +
+        '<div style="font-size:11px;color:#94A3B8;margin-top:1px;">Total Fields</div>' +
+      '</div>' +
+      '<div style="background:white;border:1px solid #E2E8F0;border-radius:6px;padding:8px 14px;text-align:center;">' +
+        '<div style="font-size:18px;font-weight:700;color:#DC2626;">' + reqFields.length + '</div>' +
+        '<div style="font-size:11px;color:#94A3B8;margin-top:1px;">Required</div>' +
+      '</div>' +
+      '<div style="background:white;border:1px solid #E2E8F0;border-radius:6px;padding:8px 14px;text-align:center;">' +
+        '<div style="font-size:18px;font-weight:700;color:#0369A1;">' + optFields.length + '</div>' +
+        '<div style="font-size:11px;color:#94A3B8;margin-top:1px;">Optional</div>' +
+      '</div>' +
+      '<div style="background:white;border:1px solid #E2E8F0;border-radius:6px;padding:8px 14px;">' +
+        '<div style="font-size:11px;color:#94A3B8;margin-bottom:2px;">Machine Name</div>' +
+        '<code style="font-size:12px;color:#0F172A;font-family:ui-monospace,monospace;">' + s.machine + '</code>' +
+      '</div>' +
+    '</div>' +
+
+    noteHtml + taxonomyNoteHtml +
+
+    // Required fields
+    (reqFields.length ? '<div style="margin-bottom:24px;"><div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;"><span class="badge-req">Required</span><span style="font-size:13px;font-weight:600;color:#0F172A;">' + reqFields.length + ' field' + (reqFields.length!==1?'s':'') + '</span></div>' + fieldsTable(reqFields) + '</div>' : '') +
+
+    // Optional fields
+    (optFields.length ? '<div style="margin-bottom:24px;"><div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;"><span class="badge-opt">Optional</span><span style="font-size:13px;font-weight:600;color:#0F172A;">' + optFields.length + ' field' + (optFields.length!==1?'s':'') + '</span></div>' + fieldsTable(optFields) + '</div>' : '') +
+
+    // Navigation between sections
+    (function(){
+      var idx = DATA.findIndex(function(x){ return x.id === s.id; });
+      var prev = DATA[idx-1], next = DATA[idx+1];
+      if (!prev && !next) return '';
+      return '<div style="display:flex;gap:8px;margin-top:8px;padding-top:20px;border-top:1px solid #E2E8F0;">' +
+        (prev ? '<button onclick="selectSection(\'' + prev.id + '\')" style="display:flex;align-items:center;gap:6px;background:white;border:1px solid #E2E8F0;padding:7px 14px;border-radius:6px;font-size:12.5px;color:#475569;cursor:pointer;font-family:Inter,sans-serif;" onmouseover="this.style.background=\'#F8FAFC\'" onmouseout="this.style.background=\'white\'">← ' + prev.name + '</button>' : '<span></span>') +
+        '<div style="flex:1;"></div>' +
+        (next ? '<button onclick="selectSection(\'' + next.id + '\')" style="display:flex;align-items:center;gap:6px;background:white;border:1px solid #E2E8F0;padding:7px 14px;border-radius:6px;font-size:12.5px;color:#475569;cursor:pointer;font-family:Inter,sans-serif;" onmouseover="this.style.background=\'#F8FAFC\'" onmouseout="this.style.background=\'white\'"> ' + next.name + ' →</button>' : '') +
+        '</div>';
+    })();
+}
+
+// ─── WELCOME / GROUP OVERVIEW ────────────────────────────────────────────────
+function renderWelcome() {
+  var groups = {};
+  DATA.forEach(function(s){ if(!groups[s.group]) groups[s.group]=[]; groups[s.group].push(s); });
+  var el = document.getElementById('group-overview');
+  el.innerHTML = Object.keys(groups).map(function(g){
+    var items = groups[g];
+    var icons = items.slice(0,4).map(function(s){ return '<i class="' + s.icon + '" style="font-size:18px;color:#94A3B8;"></i>'; }).join('');
+    return '<div onclick="selectSection(\'' + items[0].id + '\')" style="background:white;border:1px solid #E2E8F0;border-radius:8px;padding:14px 16px;cursor:pointer;transition:box-shadow .15s;" onmouseover="this.style.boxShadow=\'0 2px 8px rgba(0,0,0,.08)\'" onmouseout="this.style.boxShadow=\'none\'">' +
+      '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">' +
+        '<div style="color:#0369A1;">' + (GROUP_ICONS[g]||'') + '</div>' +
+        '<span style="font-size:12.5px;font-weight:600;color:#0F172A;">' + g + '</span>' +
+      '</div>' +
+      '<div style="font-size:11px;color:#94A3B8;">' + items.length + ' content type' + (items.length!==1?'s':'') + '</div>' +
+      '<div style="margin-top:8px;display:flex;gap:6px;align-items:center;">' + icons + '</div>' +
+    '</div>';
+  }).join('');
+}
+
+// ─── SEARCH ──────────────────────────────────────────────────────────────────
+document.getElementById('search-input').addEventListener('input', function(){
+  var q = this.value.trim().toLowerCase();
+  buildSidebar(q || null);
+  if (!q && activeId) {
+    document.querySelectorAll('.nav-item').forEach(function(el){
+      el.classList.toggle('active', el.getAttribute('data-id') === activeId);
+    });
+  }
+});
+
+// ─── KEYBOARD NAV ────────────────────────────────────────────────────────────
+document.addEventListener('keydown', function(e){
+  if (document.activeElement === document.getElementById('search-input')) return;
+  if (!activeId) return;
+  var idx = DATA.findIndex(function(x){ return x.id === activeId; });
+  if (e.key === 'ArrowDown' && DATA[idx+1]) { e.preventDefault(); selectSection(DATA[idx+1].id); }
+  if (e.key === 'ArrowUp'   && DATA[idx-1]) { e.preventDefault(); selectSection(DATA[idx-1].id); }
+});
+
+// ─── INIT ────────────────────────────────────────────────────────────────────
+buildSidebar(null);
+renderWelcome();
+</script>
+</body>
+</html>

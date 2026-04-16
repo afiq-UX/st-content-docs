@@ -3,851 +3,1100 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ST Content Docs TEST</title>
+<title>ST Content Docs</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
-<script src="https://cdn.tailwindcss.com"></script>
-<script>
-tailwind.config = {
-  theme: {
-    extend: {
-      fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] }
-    }
-  }
-}
-</script>
 <style>
-* { box-sizing: border-box; }
-body { font-family: 'Inter', system-ui, sans-serif; background: #F0F4F8; color: #1E293B; margin: 0; }
+/* ══ RESET & VARS ══════════════════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #F0F4F8;
+  --surface: #ffffff;
+  --border: #E2E8F0;
+  --text: #0F172A;
+  --text-2: #334155;
+  --text-muted: #64748B;
+  --accent: #2563EB;
+  --accent-soft: #EFF6FF;
+  --required: #DC2626;
+  --optional: #16A34A;
+  --mono: 'JetBrains Mono', monospace;
+  --sans: 'Inter', sans-serif;
+  --radius: 12px;
+  --radius-sm: 8px;
+  --sidebar-w: 260px;
+  --rail-w: 64px;
+  --tr: 0.22s cubic-bezier(0.4,0,0.2,1);
+}
+body { font-family: var(--sans); background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.6; min-height: 100vh; }
 
-/* Scrollbar */
+/* ══ SCROLLBAR ═════════════════════════════════════════════════════════ */
 ::-webkit-scrollbar { width: 4px; height: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 99px; }
-::-webkit-scrollbar-thumb:hover { background: #94A3B8; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.25); }
 
-/* Sidebar nav item */
-.nav-item {
-  display: flex; align-items: center; gap: 9px;
-  padding: 7px 16px 7px 14px; cursor: pointer; font-size: 13px; font-weight: 500;
-  color: #475569; border-radius: 0; transition: background 0.12s, color 0.12s;
-  border-left: 2px solid transparent; user-select: none;
+/* ══ LAYOUT ════════════════════════════════════════════════════════════ */
+.app { display: flex; min-height: 100vh; }
+
+/* ══ SIDEBAR ═══════════════════════════════════════════════════════════ */
+#sidebar {
+  width: var(--sidebar-w); min-width: var(--sidebar-w);
+  background: linear-gradient(180deg, #0D1B2A 0%, #1a3a5c 100%);
+  color: #fff;
+  position: sticky; top: 0; height: 100vh;
+  display: flex; flex-direction: column;
+  overflow: hidden; flex-shrink: 0;
+  box-shadow: 2px 0 20px rgba(0,0,0,0.18);
+  transition: width var(--tr), min-width var(--tr);
+  z-index: 50;
 }
-.nav-item:hover { background: #EFF6FF; color: #1E40AF; }
-.nav-item.active { background: #EFF6FF; color: #1D4ED8; border-left-color: #3B82F6; font-weight: 600; }
+#sidebar.collapsed { width: var(--rail-w); min-width: var(--rail-w); }
 
-/* Group label */
-.group-label {
-  font-size: 10px; font-weight: 700; letter-spacing: 0.1em;
-  text-transform: uppercase; color: #94A3B8;
-  padding: 18px 16px 5px; display: flex; align-items: center; gap: 6px;
+/* Brand */
+.sb-brand {
+  padding: 1.25rem 1.1rem 1rem;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+  flex-shrink: 0; overflow: hidden;
+}
+.sb-brand-logo {
+  width: 28px; height: 28px; border-radius: 6px;
+  background: linear-gradient(135deg,#3B82F6,#1D4ED8);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px; color: #fff; flex-shrink: 0; margin-bottom: 0.5rem;
+}
+.sb-brand-eyebrow {
+  font-size: 9.5px; font-weight: 700; letter-spacing: 0.14em;
+  text-transform: uppercase; color: rgba(147,197,253,0.65);
+  white-space: nowrap; overflow: hidden;
+  transition: opacity var(--tr);
+}
+.sb-brand-title {
+  font-size: 13.5px; font-weight: 600; color: #F1F5F9;
+  line-height: 1.3; white-space: nowrap; overflow: hidden;
+  transition: opacity var(--tr);
+}
+#sidebar.collapsed .sb-brand-eyebrow,
+#sidebar.collapsed .sb-brand-title { opacity: 0; pointer-events: none; }
+
+/* Topbar: search + toggle */
+.sb-topbar {
+  display: flex; align-items: center; gap: 6px;
+  padding: 0.7rem 0.75rem 0.5rem; flex-shrink: 0;
+}
+.sb-search {
+  flex: 1; min-width: 0; position: relative;
+  transition: opacity var(--tr), max-width var(--tr);
+}
+.sb-search input {
+  width: 100%;
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: #F1F5F9; border-radius: var(--radius-sm);
+  padding: 0.45rem 0.75rem 0.45rem 2rem;
+  font-size: 12.5px; font-family: var(--sans); outline: none;
+  transition: border-color 0.15s, background 0.15s;
+}
+.sb-search input::placeholder { color: rgba(255,255,255,0.28); }
+.sb-search input:focus { border-color: rgba(99,162,255,0.5); background: rgba(255,255,255,0.1); }
+.sb-search-icon {
+  position: absolute; left: 0.55rem; top: 50%; transform: translateY(-50%);
+  color: rgba(255,255,255,0.3); font-size: 13px; pointer-events: none;
+}
+#sidebar.collapsed .sb-search { opacity: 0; pointer-events: none; max-width: 0; overflow: hidden; padding: 0; flex: 0; }
+
+#sb-toggle {
+  width: 44px; height: 44px; min-width: 44px;
+  border-radius: var(--radius-sm);
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: rgba(255,255,255,0.7); cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; flex-shrink: 0;
+  transition: background 0.15s, color 0.15s, transform var(--tr);
+}
+#sb-toggle:hover { background: rgba(255,255,255,0.13); color: #fff; }
+#sidebar.collapsed #sb-toggle { transform: rotate(180deg); }
+
+/* Nav scroll */
+.sb-nav-scroll {
+  flex: 1; overflow-y: auto; overflow-x: hidden;
+  padding: 0.25rem 0 1rem;
 }
 
-/* Field type badge */
-.type-pill {
-  display: inline-flex; align-items: center; gap: 4px;
-  font-size: 11px; font-weight: 500; padding: 2px 8px;
-  border-radius: 4px; background: #F1F5F9; color: #475569;
-  border: 1px solid #E2E8F0; white-space: nowrap;
+/* Group */
+.sb-group { margin-bottom: 2px; }
+.sb-group-header {
+  display: flex; align-items: center; gap: 0.55rem;
+  padding: 0.55rem 1.1rem 0.55rem 0.85rem;
+  cursor: pointer; user-select: none;
+  transition: background 0.13s; overflow: hidden;
 }
+.sb-group-header:hover { background: rgba(255,255,255,0.05); }
+.sb-group-icon {
+  width: 28px; height: 28px; min-width: 28px;
+  border-radius: 7px; display: flex; align-items: center; justify-content: center;
+  font-size: 15px; flex-shrink: 0;
+  transition: transform 0.15s;
+}
+.sb-group-header:hover .sb-group-icon { transform: scale(1.08); }
+.sb-group-label-wrap {
+  flex: 1; min-width: 0;
+  transition: opacity var(--tr); overflow: hidden;
+}
+.sb-group-label {
+  font-size: 11px; font-weight: 700;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  color: #93C5FD;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.sb-group-count {
+  font-size: 10px; font-weight: 500;
+  background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.45);
+  padding: 0.05rem 0.4rem; border-radius: 99px; margin-left: 0.35rem;
+  vertical-align: middle;
+}
+.sb-group-chevron {
+  font-size: 14px; color: rgba(255,255,255,0.3);
+  transition: transform 0.2s, opacity var(--tr); flex-shrink: 0;
+}
+.sb-group.open .sb-group-chevron { transform: rotate(90deg); }
+#sidebar.collapsed .sb-group-label-wrap { opacity: 0; pointer-events: none; }
+#sidebar.collapsed .sb-group-chevron { opacity: 0; pointer-events: none; }
 
-/* Status badge */
-.badge-req { background: #FEF2F2; color: #B91C1C; border: 1px solid #FECACA; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; }
-.badge-opt { background: #FEF9C3; color: #854D0E; border: 1px solid #FDE68A; font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 4px; }
+/* Group items */
+.sb-group-items { overflow: hidden; max-height: 0; transition: max-height 0.25s cubic-bezier(0.4,0,0.2,1); }
+.sb-group.open .sb-group-items { max-height: 800px; }
+#sidebar.collapsed .sb-group-items { max-height: 0 !important; }
 
-/* Note boxes — differentiated */
-.note-tip  { background: #F0FDF4; border: 1px solid #BBF7D0; border-left: 3px solid #22C55E; }
-.note-info { background: #EFF6FF; border: 1px solid #BFDBFE; border-left: 3px solid #3B82F6; }
-.note-warn { background: #FFFBEB; border: 1px solid #FDE68A; border-left: 3px solid #F59E0B; }
-
-/* Content fade */
-#content-area { transition: opacity 0.12s ease; }
-#content-area.fading { opacity: 0; }
-
-.nav-item.hidden-item { display: none; }
-
-.group-items { overflow: hidden; }
-#sidebar { transition: width 0.18s ease; }
-#main-content { transition: margin-left 0.18s ease; }
-#sidebar-toggle {
-  position: fixed;
-  top: 64px;
-  width: 26px;
-  height: 26px;
-  border-radius: 999px;
-  border: 1px solid #E2E8F0;
-  background: white;
-  color: #64748B;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 12px;
+.sb-item {
+  display: flex; align-items: center; gap: 0.55rem;
+  padding: 0.38rem 1.1rem 0.38rem 1.15rem;
+  font-size: 12.5px; font-weight: 400;
+  color: rgba(226,232,240,0.65);
   cursor: pointer;
-  z-index: 120;
-  box-shadow: 0 1px 4px rgba(15, 23, 42, 0.1);
-  transition: left 0.18s ease, box-shadow 0.13s;
+  border-left: 2px solid transparent;
+  transition: background 0.12s, color 0.12s, border-color 0.12s;
+  white-space: nowrap; overflow: hidden; user-select: none;
 }
-#sidebar-toggle:hover { box-shadow: 0 2px 8px rgba(15, 23, 42, 0.16); color: #1E293B; }
+.sb-item:hover { color: #F1F5F9; background: rgba(255,255,255,0.05); border-left-color: rgba(99,162,255,0.4); }
+.sb-item.active { color: #fff; background: rgba(59,130,246,0.18); border-left-color: #3B82F6; font-weight: 500; }
+.sb-item-label { overflow: hidden; text-overflow: ellipsis; }
 
-.glass-card {
-  background: rgba(255, 255, 255, 0.9);
-  border: 1px solid rgba(226, 232, 240, 0.9);
-  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.06);
+/* Sidebar footer: new button */
+.sb-footer {
+  padding: 0.75rem;
+  border-top: 1px solid rgba(255,255,255,0.07);
+  flex-shrink: 0; overflow: hidden;
+  transition: opacity var(--tr);
 }
+#sidebar.collapsed .sb-footer { opacity: 0; pointer-events: none; }
+.sb-new-btn {
+  width: 100%; padding: 0.55rem 1rem;
+  background: rgba(59,130,246,0.15);
+  border: 1px solid rgba(99,162,255,0.3);
+  border-radius: var(--radius-sm);
+  color: #93C5FD; font-size: 12px; font-weight: 600;
+  font-family: var(--sans); cursor: pointer; letter-spacing: 0.02em;
+  display: flex; align-items: center; justify-content: center; gap: 0.4rem;
+  transition: background 0.15s;
+}
+.sb-new-btn:hover { background: rgba(59,130,246,0.25); }
+
+/* ══ PANEL RAIL ════════════════════════════════════════════════════════ */
+#panel-rail {
+  display: none; flex-direction: column;
+  align-items: center; padding: 0.5rem 0; gap: 4px;
+  overflow-y: auto; overflow-x: hidden; flex: 1;
+}
+#sidebar.collapsed #panel-rail { display: flex; }
+#sidebar.collapsed .sb-nav-scroll { display: none; }
+
+.rail-item {
+  position: relative;
+  width: 44px; height: 44px; border-radius: var(--radius-sm);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 19px; cursor: pointer;
+  transition: background 0.13s, color 0.13s;
+  color: rgba(255,255,255,0.45); flex-shrink: 0;
+}
+.rail-item:hover { background: rgba(255,255,255,0.1); color: #fff; }
+.rail-item.has-active { color: #93C5FD; background: rgba(59,130,246,0.18); }
+.rail-item::after {
+  content: attr(data-tooltip);
+  position: absolute; left: calc(100% + 10px); top: 50%; transform: translateY(-50%);
+  background: #1E293B; color: #F1F5F9;
+  font-size: 12px; font-weight: 500; padding: 0.3rem 0.7rem;
+  border-radius: 6px; white-space: nowrap;
+  pointer-events: none; opacity: 0; transition: opacity 0.15s;
+  z-index: 200; box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+.rail-item::before {
+  content: ''; position: absolute;
+  left: calc(100% + 5px); top: 50%; transform: translateY(-50%);
+  border: 5px solid transparent; border-right-color: #1E293B;
+  pointer-events: none; opacity: 0; transition: opacity 0.15s; z-index: 200;
+}
+.rail-item:hover::after, .rail-item:hover::before { opacity: 1; }
+
+/* ══ MAIN ══════════════════════════════════════════════════════════════ */
+#main {
+  flex: 1; min-width: 0;
+  display: flex; flex-direction: column;
+  height: 100vh; overflow-y: auto;
+}
+.main-inner { padding: 2.5rem 3rem; max-width: 880px; width: 100%; flex: 1; }
+
+/* ══ WELCOME ═══════════════════════════════════════════════════════════ */
+#view-welcome { display: block; }
+#view-detail   { display: none; }
+
+.welcome-hero { margin-bottom: 2rem; }
+.welcome-eyebrow {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--accent); background: var(--accent-soft);
+  padding: 0.25rem 0.75rem; border-radius: 99px;
+  border: 1px solid #BFDBFE; margin-bottom: 1rem;
+}
+.welcome-hero h1 {
+  font-size: 30px; font-weight: 700; color: var(--text);
+  line-height: 1.2; margin-bottom: 0.65rem; letter-spacing: -0.02em;
+}
+.welcome-hero p { font-size: 14.5px; color: var(--text-muted); max-width: 560px; line-height: 1.65; }
+.welcome-stats { display: flex; gap: 0.6rem; flex-wrap: wrap; margin-top: 1.25rem; }
+.stat-chip {
+  display: inline-flex; align-items: center; gap: 0.35rem;
+  font-size: 12px; font-weight: 500; padding: 0.3rem 0.75rem;
+  border-radius: 99px; background: #fff; border: 1px solid var(--border);
+  color: var(--text-2); box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+.stat-chip i { font-size: 13px; color: var(--accent); }
+
+.welcome-callout {
+  background: var(--accent-soft); border: 1px solid #BFDBFE;
+  border-left: 3px solid var(--accent); border-radius: var(--radius-sm);
+  padding: 0.85rem 1.1rem; font-size: 13px; color: #1E40AF;
+  display: flex; gap: 0.65rem; align-items: flex-start; margin-bottom: 2rem;
+}
+.welcome-callout i { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+
+.group-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px,1fr)); gap: 1rem; }
+.group-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 1.25rem; cursor: pointer;
+  transition: box-shadow 0.18s, border-color 0.18s, transform 0.15s;
+  position: relative; overflow: hidden;
+}
+.group-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: var(--card-accent, #3B82F6); opacity: 0; transition: opacity 0.18s;
+}
+.group-card:hover { box-shadow: 0 6px 24px rgba(15,23,42,.09); border-color: #C7D7E8; transform: translateY(-1px); }
+.group-card:hover::before { opacity: 1; }
+.group-card-icon {
+  width: 40px; height: 40px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; margin-bottom: 0.85rem;
+}
+.group-card-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 0.3rem; }
+.group-card-desc { font-size: 12.5px; color: var(--text-muted); line-height: 1.5; }
+.group-card-count {
+  display: inline-flex; align-items: center; margin-top: 0.75rem;
+  font-size: 11px; font-weight: 500; color: var(--text-muted); gap: 0.3rem;
+}
+
+/* ══ DETAIL VIEW ═══════════════════════════════════════════════════════ */
+.detail-breadcrumb {
+  display: flex; align-items: center; gap: 0.4rem;
+  font-size: 12.5px; color: var(--text-muted); margin-bottom: 1.75rem;
+}
+.detail-breadcrumb span.bc-link { color: var(--text-muted); cursor: pointer; transition: color 0.13s; }
+.detail-breadcrumb span.bc-link:hover { color: var(--accent); }
+.detail-breadcrumb i { font-size: 12px; }
+
+.detail-header {
+  display: flex; align-items: flex-start; gap: 1.1rem;
+  margin-bottom: 1.25rem; padding-bottom: 1.25rem; border-bottom: 1px solid var(--border);
+}
+.detail-icon {
+  width: 52px; height: 52px; min-width: 52px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center; font-size: 26px;
+}
+.detail-header-top { display: flex; align-items: center; gap: 0.65rem; flex-wrap: wrap; margin-bottom: 0.3rem; }
+.detail-name { font-size: 24px; font-weight: 700; color: var(--text); letter-spacing: -0.02em; line-height: 1.2; }
+.detail-machine {
+  font-family: var(--mono); font-size: 11.5px; color: var(--text-muted);
+  background: #F1F5F9; border: 1px solid var(--border); padding: 0.15rem 0.55rem; border-radius: 5px;
+}
+.detail-group-tag { font-size: 11px; font-weight: 500; padding: 0.2rem 0.6rem; border-radius: 99px; }
+.detail-desc { font-size: 13.5px; color: var(--text-2); line-height: 1.65; }
+
+/* Action bar */
+.detail-actions {
+  display: flex; gap: 0.5rem; margin-bottom: 1.25rem; flex-wrap: wrap; align-items: center;
+}
+.btn {
+  display: inline-flex; align-items: center; gap: 0.35rem;
+  padding: 0.45rem 0.9rem; border-radius: var(--radius-sm);
+  font-size: 12px; font-weight: 500; font-family: var(--sans);
+  cursor: pointer; transition: opacity 0.15s, background 0.15s; border: 1px solid;
+}
+.btn-dark  { background: #0F172A; color: #fff; border-color: #0F172A; }
+.btn-dark:hover { opacity: 0.85; }
+.btn-ghost { background: var(--surface); color: var(--text-2); border-color: var(--border); }
+.btn-ghost:hover { background: #F8FAFC; }
+.btn-danger { background: var(--surface); color: var(--required); border-color: #FECACA; }
+.btn-danger:hover { background: #FEF2F2; }
+.btn-primary { background: linear-gradient(135deg,#2563EB,#3B82F6); color: #fff; border-color: transparent; box-shadow: 0 1px 4px rgba(59,130,246,.3); margin-left: auto; }
+.btn-primary:hover { opacity: 0.88; }
+
+/* Stats row */
+.detail-stats { display: flex; gap: 0.75rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+.detail-stat {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 0.6rem 1rem;
+  display: flex; align-items: center; gap: 0.5rem; font-size: 12.5px;
+}
+.detail-stat-val { font-weight: 700; font-size: 18px; color: var(--text); }
+.detail-stat-lbl { font-size: 11px; color: var(--text-muted); }
+.detail-stat i { font-size: 16px; color: var(--accent); }
+
+/* Callout / note */
+.callout {
+  border-radius: var(--radius-sm); padding: 0.85rem 1.1rem;
+  margin: 0 0 1.25rem; font-size: 13px;
+  display: flex; gap: 0.65rem; align-items: flex-start;
+}
+.callout i { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+.callout-tip  { background: #F0FDF4; border: 1px solid #BBF7D0; border-left: 3px solid #22C55E; color: #166534; }
+.callout-info { background: #EFF6FF; border: 1px solid #BFDBFE; border-left: 3px solid #3B82F6; color: #1E40AF; }
+.callout-warn { background: #FFFBEB; border: 1px solid #FDE68A; border-left: 3px solid #F59E0B; color: #92400E; }
+.taxonomy-note {
+  background: #EFF6FF; border: 1px solid #BFDBFE; border-left: 3px solid var(--accent);
+  border-radius: var(--radius-sm); padding: 0.75rem 1rem;
+  margin-bottom: 1.25rem; font-size: 12.5px; color: #1E40AF;
+}
+
+/* Fields section */
+.fields-section { margin-bottom: 1.75rem; }
+.fields-section-label {
+  display: flex; align-items: center; gap: 0.5rem;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+  margin-bottom: 0.6rem; padding-bottom: 0.5rem; border-bottom: 2px solid;
+}
+.required-label { color: var(--required); border-color: #FECACA; }
+.required-label i { font-size: 14px; }
+.optional-label { color: var(--text-muted); border-color: var(--border); }
+.optional-label i { font-size: 14px; }
+
+.fields-table {
+  width: 100%; border-collapse: collapse; font-size: 13px;
+  background: var(--surface); border-radius: var(--radius-sm);
+  overflow: hidden; border: 1px solid var(--border);
+}
+.fields-table th {
+  text-align: left; padding: 0.5rem 0.85rem;
+  font-size: 10.5px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase;
+  color: #94A3B8; background: #F8FAFC; border-bottom: 1px solid var(--border);
+}
+.fields-table td { padding: 0.7rem 0.85rem; border-bottom: 1px solid #F1F5F9; vertical-align: top; }
+.fields-table tr:last-child td { border-bottom: none; }
+.fields-table tr:hover td { background: #FAFCFF; }
+.field-label { font-weight: 500; color: var(--text); display: block; }
+.field-machine { font-family: var(--mono); font-size: 10.5px; color: var(--text-muted); display: block; margin-top: 2px; }
+.field-hint { color: var(--text-muted); font-size: 12.5px; line-height: 1.5; }
+
+.badge {
+  display: inline-flex; align-items: center; gap: 3px;
+  font-size: 10.5px; font-weight: 500; padding: 0.15rem 0.5rem; border-radius: 99px;
+}
+.badge-taxonomy { background: #EFF6FF; color: #1D4ED8; border: 1px solid #BFDBFE; }
+.badge-media    { background: #FFFBEB; color: #B45309; border: 1px solid #FDE68A; }
+.type-chip {
+  font-family: var(--mono); font-size: 11px; color: var(--text-muted);
+  background: #F1F5F9; border: 1px solid var(--border); padding: 0.1rem 0.45rem; border-radius: 4px;
+}
+
+/* Prev/Next */
+.detail-nav {
+  display: flex; gap: 0.75rem; margin-top: 2.5rem;
+  padding-top: 1.5rem; border-top: 1px solid var(--border);
+}
+.detail-nav-btn {
+  flex: 1; display: flex; align-items: center; gap: 0.65rem;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 0.9rem 1.1rem;
+  cursor: pointer; transition: box-shadow 0.16s, border-color 0.16s;
+  color: inherit; font-family: var(--sans);
+}
+.detail-nav-btn:hover { box-shadow: 0 4px 16px rgba(15,23,42,.08); border-color: #CBD5E1; }
+.detail-nav-btn.next { justify-content: flex-end; text-align: right; }
+.detail-nav-icon { font-size: 18px; color: var(--text-muted); flex-shrink: 0; }
+.detail-nav-dir { font-size: 10.5px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text-muted); }
+.detail-nav-name { font-size: 13.5px; font-weight: 600; color: var(--text); }
+.detail-nav-placeholder { flex: 1; }
+
+/* ══ TOAST ═════════════════════════════════════════════════════════════ */
+#toast-root { position: fixed; right: 16px; bottom: 16px; z-index: 300; display: grid; gap: 8px; max-width: 340px; }
+.toast {
+  padding: 10px 12px; border-radius: 8px; font-size: 12.5px;
+  box-shadow: 0 6px 20px rgba(15,23,42,.12);
+  transition: opacity 0.2s ease;
+}
+.toast-error   { background: #FEF2F2; border: 1px solid #FECACA; color: #991B1B; }
+.toast-success { background: #ECFDF5; border: 1px solid #A7F3D0; color: #065F46; }
+
+/* ══ MODAL ═════════════════════════════════════════════════════════════ */
+.modal-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(15,23,42,.55); z-index: 210;
+  align-items: center; justify-content: center; padding: 16px;
+}
+.modal-overlay.open { display: flex; }
+.modal-box {
+  width: 100%; max-width: 580px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); box-shadow: 0 14px 40px rgba(2,6,23,.2);
+}
+.modal-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 1rem 1.25rem; border-bottom: 1px solid var(--border);
+}
+.modal-title { font-size: 14px; font-weight: 600; color: var(--text); }
+.modal-close {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 6px; padding: 4px 8px; cursor: pointer;
+  font-size: 12px; color: var(--text-muted); transition: background 0.13s;
+}
+.modal-close:hover { background: #F8FAFC; }
+.modal-body { padding: 1.25rem; display: grid; gap: 0.75rem; }
+.modal-input {
+  padding: 0.55rem 0.75rem; border: 1px solid #CBD5E1; border-radius: 6px;
+  font-size: 13px; font-family: var(--sans); outline: none;
+  transition: border-color 0.15s;
+}
+.modal-input:focus { border-color: #93C5FD; }
+.modal-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+.modal-footer { display: flex; justify-content: flex-end; gap: 0.5rem; padding-top: 0.5rem; }
 </style>
 </head>
 <body>
+<div class="app">
 
-<!-- TOP HEADER -->
-<header style="position:fixed;top:0;left:0;right:0;height:52px;background:linear-gradient(135deg,#0F172A 0%,#1E3A5F 100%);z-index:100;display:flex;align-items:center;padding:0 20px;gap:16px;border-bottom:1px solid rgba(255,255,255,0.08);box-shadow:0 1px 8px rgba(0,0,0,0.3);">
-  <div style="display:flex;align-items:center;gap:10px;flex-shrink:0;">
-    <div style="width:32px;height:32px;background:rgba(59,130,246,0.2);border:1px solid rgba(99,162,255,0.35);border-radius:8px;display:flex;align-items:center;justify-content:center;">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#93C5FD" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
-      </svg>
-    </div>
-    <div>
-      <div style="color:#F1F5F9;font-size:13px;font-weight:700;line-height:1.2;font-family:'Space Grotesk',sans-serif;letter-spacing:0.01em;">Suruhanjaya Tenaga</div>
-      <div style="color:#64748B;font-size:10.5px;line-height:1.3;letter-spacing:0.02em;">Content Type Reference</div>
-    </div>
+<!-- ══════════════════════════════
+     SIDEBAR
+══════════════════════════════ -->
+<aside id="sidebar">
+  <div class="sb-brand">
+    <div class="sb-brand-logo"><i class="ti ti-bolt"></i></div>
+    <div class="sb-brand-eyebrow">Suruhanjaya Tenaga</div>
+    <div class="sb-brand-title">Content Management<br>Guide</div>
   </div>
 
-  <!-- Search -->
-  <div style="margin-left:auto;position:relative;">
-    <svg style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:#64748B;" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
-    </svg>
-    <input id="search-input" type="text" placeholder="Search content types…"
-      style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);color:#F1F5F9;font-size:12.5px;font-family:Inter,sans-serif;padding:6px 12px 6px 30px;border-radius:7px;width:220px;outline:none;transition:border-color 0.15s,background 0.15s;"
-      onfocus="this.style.borderColor='rgba(99,162,255,0.5)';this.style.background='rgba(255,255,255,0.12)'" onblur="this.style.borderColor='rgba(255,255,255,0.12)';this.style.background='rgba(255,255,255,0.08)'"
-    >
+  <div class="sb-topbar">
+    <div class="sb-search">
+      <i class="ti ti-search sb-search-icon"></i>
+      <input type="text" id="sb-search" placeholder="Search content types…" autocomplete="off">
+    </div>
+    <button id="sb-toggle" title="Collapse sidebar">
+      <i class="ti ti-chevrons-left"></i>
+    </button>
   </div>
 
-  <!-- Stats -->
-  <div style="display:flex;align-items:center;gap:14px;flex-shrink:0;">
-    <div style="text-align:center;">
-      <div style="color:#F1F5F9;font-size:15px;font-weight:700;line-height:1;" id="stat-total">19</div>
-      <div style="color:#64748B;font-size:10px;margin-top:2px;letter-spacing:0.04em;">Types</div>
-    </div>
-    <div style="width:1px;height:20px;background:rgba(255,255,255,0.1);"></div>
-    <div style="text-align:center;">
-      <div style="color:#F1F5F9;font-size:15px;font-weight:700;line-height:1;">6</div>
-      <div style="color:#64748B;font-size:10px;margin-top:2px;letter-spacing:0.04em;">Groups</div>
-    </div>
-    <div style="width:1px;height:20px;background:rgba(255,255,255,0.1);"></div>
-    <div style="background:rgba(59,130,246,0.2);border:1px solid rgba(99,162,255,0.3);color:#93C5FD;font-size:10px;font-weight:600;padding:2px 8px;border-radius:4px;letter-spacing:0.06em;">v2.0</div>
+  <div class="sb-nav-scroll" id="sb-nav"></div>
+  <div id="panel-rail"></div>
+
+  <div class="sb-footer">
+    <button class="sb-new-btn" onclick="openCreateContentTypeModal()">
+      <i class="ti ti-plus"></i> New Content Type
+    </button>
   </div>
-</header>
+</aside>
 
-<!-- LAYOUT -->
-<div style="display:flex;min-height:100vh;padding-top:52px;">
+<!-- ══════════════════════════════
+     MAIN
+══════════════════════════════ -->
+<main id="main">
+  <div class="main-inner">
 
-  <!-- SIDEBAR -->
-  <aside id="sidebar" style="position:fixed;top:52px;left:0;bottom:0;width:240px;background:#FAFBFC;border-right:1px solid #E8EDF2;overflow-y:auto;z-index:90;">
-    <div id="sidebar-nav"></div>
-    <!-- Empty search state -->
-    <div id="no-results" style="display:none;padding:24px 16px;text-align:center;">
-      <div style="color:#94A3B8;font-size:12px;">No results found</div>
-    </div>
-  </aside>
-  <button id="sidebar-toggle" type="button" aria-label="Toggle menu" title="Toggle menu">
-    <span id="sidebar-toggle-icon">‹</span>
-  </button>
-
-  <!-- MAIN CONTENT -->
-  <main id="main-content" style="margin-left:240px;flex:1;padding:32px 40px;min-width:0;">
-    <div id="content-area">
-
-      <!-- WELCOME STATE -->
-      <div id="welcome-view">
-        <div style="max-width:640px;margin:48px auto;text-align:center;">
-          <div style="width:60px;height:60px;background:linear-gradient(135deg,#EFF6FF,#DBEAFE);border:1px solid #BFDBFE;border-radius:16px;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;box-shadow:0 4px 16px rgba(59,130,246,0.12);">
-            <svg width="27" height="27" viewBox="0 0 24 24" fill="none" stroke="#3B82F6" stroke-width="1.8">
-              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-              <polyline points="14 2 14 8 20 8"/>
-              <line x1="16" y1="13" x2="8" y2="13"/>
-              <line x1="16" y1="17" x2="8" y2="17"/>
-              <polyline points="10 9 9 9 8 9"/>
-            </svg>
-          </div>
-          <h1 style="font-size:24px;font-weight:700;color:#0F172A;margin:0 0 10px;font-family:'Space Grotesk',sans-serif;letter-spacing:-0.01em;">Content Type Reference</h1>
-          <p style="color:#64748B;font-size:14px;line-height:1.65;margin:0 0 32px;max-width:480px;margin-left:auto;margin-right:auto;">
-            Documentation for all 19 content types used in the ST website. Select a content type from the sidebar to view its fields, requirements, and usage notes.
-          </p>
-          <!-- Group overview cards -->
-          <div id="group-overview" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;text-align:left;"></div>
+    <!-- Welcome -->
+    <div id="view-welcome">
+      <div class="welcome-hero">
+        <div class="welcome-eyebrow"><i class="ti ti-bolt"></i> st.gov.my · Drupal 11</div>
+        <h1>Content Management Guide</h1>
+        <p>Reference documentation for the Operations Team. Covers all content types, their fields, and the taxonomy categories used across the site.</p>
+        <div class="welcome-stats">
+          <span class="stat-chip" id="stat-types"><i class="ti ti-layers"></i> <span id="stat-count">0</span> Content Types</span>
+          <span class="stat-chip"><i class="ti ti-tags"></i> 13 Taxonomy Vocabularies</span>
+          <span class="stat-chip"><i class="ti ti-language"></i> Bilingual EN / BM</span>
+          <span class="stat-chip"><i class="ti ti-cube"></i> Drupal 11</span>
         </div>
       </div>
-
-      <!-- SECTION DETAIL VIEW -->
-      <div id="section-view" style="display:none;max-width:800px;"></div>
-
+      <div class="welcome-callout">
+        <i class="ti ti-info-circle"></i>
+        <span><strong>How to use this guide:</strong> Select a content type from the sidebar or click a group card. Each page covers what the content type is for, field descriptions, and which fields are required before publishing.</span>
+      </div>
+      <div class="group-grid" id="group-grid"></div>
     </div>
-  </main>
+
+    <!-- Detail -->
+    <div id="view-detail"></div>
+
+  </div>
+</main>
+</div>
+
+<!-- Toast -->
+<div id="toast-root"></div>
+
+<!-- Content Type Modal -->
+<div class="modal-overlay" id="ct-modal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <span class="modal-title" id="ct-modal-title">Content Type</span>
+      <button class="modal-close" onclick="closeModal('ct-modal')">Close</button>
+    </div>
+    <form class="modal-body" id="ct-modal-form">
+      <input class="modal-input" name="id" placeholder="ID (e.g. newsroom_custom)">
+      <input class="modal-input" name="name" placeholder="Name" required>
+      <input class="modal-input" name="machine" placeholder="Machine name" required>
+      <input class="modal-input" name="group" placeholder="Group" required>
+      <div class="modal-row">
+        <input class="modal-input" name="icon" placeholder="Icon (e.g. ti ti-file)">
+        <input class="modal-input" name="color" placeholder="Color (e.g. #EEF2F7)">
+      </div>
+      <textarea class="modal-input" name="description" placeholder="Description" rows="3" style="resize:vertical;"></textarea>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-ghost" onclick="closeModal('ct-modal')">Cancel</button>
+        <button type="submit" class="btn btn-dark">Save</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Field Modal -->
+<div class="modal-overlay" id="field-modal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <span class="modal-title" id="field-modal-title">Field</span>
+      <button class="modal-close" onclick="closeModal('field-modal')">Close</button>
+    </div>
+    <form class="modal-body" id="field-modal-form">
+      <input class="modal-input" name="label" placeholder="Field label" required>
+      <input class="modal-input" name="machine" placeholder="Machine name (field_example)" required>
+      <textarea class="modal-input" name="hint" placeholder="Hint / description" rows="2" style="resize:vertical;"></textarea>
+      <div class="modal-row">
+        <select class="modal-input" name="status">
+          <option value="optional">Optional</option>
+          <option value="required">Required</option>
+        </select>
+        <select class="modal-input" name="type" id="field-type-select"></select>
+      </div>
+      <label style="display:flex;gap:8px;align-items:center;font-size:12px;color:var(--text-2);">
+        <input name="multiple" type="checkbox"> Allow multiple values
+      </label>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-ghost" onclick="closeModal('field-modal')">Cancel</button>
+        <button type="submit" class="btn btn-dark">Save</button>
+      </div>
+    </form>
+  </div>
 </div>
 
 <script>
-// ─── DATA ───────────────────────────────────────────────────────────────────
-var DATA = [{id:"newsroom",name:"Newsroom",machine:"newsroom",group:"Newsroom & Media",icon:"ti ti-news",color:"#FDE8E8",description:"The main content type for all news-related posts — press releases, events, announcements, workshops, ST statements, and media articles.",note:{kind:"tip",text:"Always set <strong>News Type</strong> and <strong>Publish Date</strong> — these are required for the post to appear in the right section."},taxonomyNote:"News Type controls where this post appears. Options: Press Releases, Announcement / Notice, ST Statements, ST@Media, Media Articles, Events, Workshops, News",fields:[{label:"Title",machine:"title",hint:"The headline of the article or announcement.",status:"required",type:"text"},{label:"Publish Date",machine:"field_publish_date",hint:"The official date shown as 'Issued' on the listing page.",status:"required",type:"date"},{label:"News Type",machine:"field_news_type",hint:"Pick a category (e.g. Events, Press Releases). Determines which section it appears under in Newsroom.",status:"required",type:"taxonomy"},{label:"Description",machine:"field_description",hint:"Short teaser text for listing cards. Plain text only.",status:"optional",type:"plain-text"},{label:"Content",machine:"field_content",hint:"Main body of the article. Supports rich text, images, and formatting.",status:"optional",type:"rich-text"},{label:"Featured Image",machine:"field_featured_image",hint:"Main image shown on listing cards and article header. Upload from Media library.",status:"optional",type:"media-image"},{label:"File / Attachment",machine:"field_file",hint:"Attach a PDF (e.g. press release document). Shown as a download button.",status:"optional",type:"media-doc"},{label:"Location",machine:"field_location",hint:"For Events only — enter the venue or city (e.g. Putrajaya).",status:"optional",type:"plain-text"},{label:"External Links",machine:"field_external_links",hint:"Link to an external source. Enter the URL and a display label.",status:"optional",type:"link"},{label:"Featured",machine:"field_featured",hint:"Tick to feature this post as the large hero card in the News section.",status:"optional",type:"boolean"},{label:"Tags",machine:"field_tags",hint:"Add tags to group related content. Multiple tags allowed.",status:"optional",type:"taxonomy",multiple:true}]},{id:"highlights",name:"Highlights",machine:"highlights",group:"Newsroom & Media",icon:"ti ti-star",color:"#FFF3E0",description:"Featured stories shown in the Highlights carousel on the homepage. Used for high-priority content needing extra visibility.",fields:[{label:"Title",machine:"title",hint:"Headline for the highlight card.",status:"required",type:"text"},{label:"Body",machine:"field_body",hint:"Main content. Supports rich text and a short summary.",status:"optional",type:"rich-text"},{label:"Featured Image",machine:"field_featured_image",hint:"Visual image shown on the highlight card. Use a high-quality landscape image.",status:"optional",type:"media-image"},{label:"Links",machine:"field_links",hint:"Call-to-action links (e.g. 'Read more', 'Register here'). Multiple links allowed.",status:"optional",type:"link",multiple:true},{label:"Tags",machine:"field_h_tags",hint:"Assign a Highlights Tag to categorise this highlight internally.",status:"optional",type:"taxonomy"}]},{id:"faq",name:"FAQ",machine:"faq",group:"Knowledge & Resources",icon:"ti ti-help",color:"#E8F7EE",description:"Frequently asked questions. Each entry is a single question-and-answer pair, organised by category and topic.",note:{kind:"info",text:"<strong>FAQ Category</strong> and <strong>Topic Tag</strong> control how this FAQ is grouped and filtered on the FAQ page. Both can have multiple values."},fields:[{label:"Title (Question)",machine:"title",hint:"Write as a full question, e.g. 'How do I apply for a license?'",status:"required",type:"text"},{label:"Answer",machine:"field_answers",hint:"The full answer. Supports rich text, tables, and links.",status:"optional",type:"rich-text"},{label:"Question (Long)",machine:"field_question_long",hint:"Use when the question needs more context or multi-line explanation.",status:"optional",type:"plain-text"},{label:"Question with Images",machine:"field_question_with_images",hint:"Use when the question needs supporting diagrams or charts.",status:"optional",type:"rich-text"},{label:"FAQ Category",machine:"field_faq_category",hint:"Assign categories. Appears as filter tabs on the FAQ page. Multiple allowed.",status:"optional",type:"taxonomy",multiple:true},{label:"Topic Tag",machine:"field_topic_tag",hint:"Assigns this FAQ to a section in the FAQ hierarchy.",status:"optional",type:"taxonomy"},{label:"Topic Reference",machine:"field_topic_reference",hint:"Link to a related Topic page on the site.",status:"optional",type:"content-ref"},{label:"File Attachment",machine:"field_file_attachment",hint:"Attach supporting documents (PDFs, forms). Multiple files allowed.",status:"optional",type:"media-doc",multiple:true},{label:"External Links",machine:"field_external_links",hint:"Link to an external resource relevant to this FAQ.",status:"optional",type:"link"}]},{id:"resource",name:"Resource",machine:"resource",group:"Knowledge & Resources",icon:"ti ti-file-description",color:"#EEF2F7",description:"Downloadable publications, reports, and magazines. Appears in Publications and Resources listing pages.",fields:[{label:"Title",machine:"title",hint:"Publication title, e.g. 'Energy Malaysia, Volume 27, 2025'.",status:"required",type:"text"},{label:"Summary",machine:"field_summary",hint:"Short description shown on listing cards.",status:"optional",type:"plain-text"},{label:"Resource Type",machine:"field_resource_type",hint:"Select the type (e.g. Magazine, Annual Report). Shown as a badge on the card.",status:"optional",type:"taxonomy"},{label:"Publication Date",machine:"field_publication_date",hint:"The official date this resource was issued.",status:"optional",type:"date"},{label:"Cover Image",machine:"field_featured_image",hint:"Upload the cover thumbnail shown on listing cards.",status:"optional",type:"media-image"},{label:"File",machine:"field_file",hint:"Upload the PDF or document for download.",status:"optional",type:"media-doc"},{label:"External Link",machine:"field_external_links",hint:"Use if the resource is hosted externally instead of uploaded.",status:"optional",type:"link"},{label:"Topic Reference",machine:"field_topic_reference",hint:"Link to a related section/topic page on the site.",status:"optional",type:"content-ref"}]},{id:"policies",name:"Policies",machine:"policies",group:"Knowledge & Resources",icon:"ti ti-clipboard-list",color:"#FDE8E8",description:"Official regulatory policies, guidelines, and frameworks with attachments.",fields:[{label:"Title",machine:"title",hint:"Name of the policy or guideline.",status:"required",type:"text"},{label:"Description",machine:"field_body",hint:"Full description or content. Supports rich text and a summary.",status:"optional",type:"rich-text"},{label:"Policy Category",machine:"field_policy_categories",hint:"Assign to the relevant category for grouping and filtering.",status:"optional",type:"taxonomy"},{label:"Featured Image",machine:"field_featured_image",hint:"Optional cover image for this policy entry.",status:"optional",type:"media-image"},{label:"File Attachment",machine:"field_file_attachment",hint:"Attach the policy document(s) for download. Multiple files allowed.",status:"optional",type:"media-doc",multiple:true}]},{id:"consultation_hub",name:"Consultation Hub",machine:"consultation_hub",group:"Knowledge & Resources",icon:"ti ti-handshake",color:"#E8F7EE",description:"Public consultation documents and regulatory notices requiring attached key documents.",fields:[{label:"Title",machine:"title",hint:"Title of the consultation document or notice.",status:"required",type:"text"},{label:"Body",machine:"field_body",hint:"Full content of the consultation. Supports rich text and a summary.",status:"optional",type:"rich-text"},{label:"Key Documents",machine:"field_key_documents",hint:"Upload the consultation documents. Multiple files allowed.",status:"optional",type:"media-doc",multiple:true}]},{id:"topic",name:"Topic",machine:"topic",group:"Knowledge & Resources",icon:"ti ti-folders",color:"#EEF2F7",description:"Sub-pages that sit under a main Page. Used to organise detailed subject areas under a parent section.",fields:[{label:"Title",machine:"title",hint:"Name of the topic.",status:"required",type:"text"},{label:"Introduction",machine:"field_introduction",hint:"Brief intro paragraph shown at the top of the page.",status:"optional",type:"plain-text"},{label:"Parent Page",machine:"field_parent",hint:"Link this topic to its parent Page (the main section it belongs under).",status:"optional",type:"content-ref"},{label:"File Attachment",machine:"field_file_attachment",hint:"Attach any supporting documents. Multiple files allowed.",status:"optional",type:"media-doc",multiple:true}]},{id:"page",name:"Page",machine:"page",group:"Pages & Navigation",icon:"ti ti-layout",color:"#F0EDE8",description:"Main section landing pages and standalone content pages (e.g. Stakeholders, Security). Layout managed via Layout Builder.",note:{kind:"warn",text:"This content type uses <strong>Layout Builder</strong>. Avoid editing the Layout section — contact the dev team for structural page changes."},fields:[{label:"Title",machine:"title",hint:"Page title shown as the main heading.",status:"required",type:"text"},{label:"Description",machine:"field_description",hint:"Short descriptive text used in SEO and page intros.",status:"required",type:"plain-text"},{label:"Content",machine:"field_content",hint:"Main body content in rich text.",status:"optional",type:"rich-text"},{label:"Featured Image",machine:"field_featured_image",hint:"Hero or banner image for the page.",status:"optional",type:"media-image"},{label:"Links",machine:"field_links",hint:"Additional links shown on the page. Multiple allowed.",status:"optional",type:"link",multiple:true},{label:"Tags",machine:"field_tags",hint:"Tag this page for grouping with related content.",status:"optional",type:"taxonomy",multiple:true}]},{id:"page_with_links",name:"Page with Links",machine:"page_with_links",group:"Pages & Navigation",icon:"ti ti-link",color:"#FEF9E7",description:"A lighter page type for sections that are primarily a curated list of links with a short intro.",fields:[{label:"Title",machine:"title",hint:"Page title.",status:"required",type:"text"},{label:"Introduction",machine:"field_intro",hint:"Short formatted intro paragraph shown at the top.",status:"optional",type:"rich-text"},{label:"Long Introduction",machine:"field_long_introduction",hint:"More detailed intro if needed.",status:"optional",type:"rich-text"},{label:"External Links",machine:"field_links",hint:"The list of links shown on this page. Multiple allowed.",status:"optional",type:"link",multiple:true}]},{id:"about_us",name:"About Us",machine:"about_us",group:"Pages & Navigation",icon:"ti ti-building",color:"#FDE8E8",description:"Content for the About Us section pages — organisational background, mission, and vision.",fields:[{label:"Title",machine:"title",hint:"Section title.",status:"required",type:"text"},{label:"Body",machine:"field_body",hint:"Main content with rich text and optional summary.",status:"optional",type:"rich-text"},{label:"Image",machine:"field_image",hint:"Supporting image for this About Us section.",status:"optional",type:"media-image"}]},{id:"quicklinks",name:"Quicklinks",machine:"quicklinks",group:"Pages & Navigation",icon:"ti ti-bolt",color:"#E8F7EE",description:"External agency or partner links shown in the Quicklinks section on the homepage, grouped by category.",fields:[{label:"Agency Name",machine:"title",hint:"Name of the agency or organisation.",status:"required",type:"text"},{label:"Description",machine:"field_description",hint:"One-line description shown below the agency name.",status:"optional",type:"plain-text"},{label:"Logo",machine:"field_logo",hint:"Upload the agency logo used as the thumbnail.",status:"optional",type:"media-image"},{label:"Link",machine:"field_links",hint:"URL of the agency website. Multiple links allowed.",status:"optional",type:"link",multiple:true},{label:"Quicklink Category",machine:"field_quicklink_category",hint:"Which group this belongs to (e.g. Government & Policy, National Energy Utilities).",status:"optional",type:"taxonomy"},{label:"Topic",machine:"field_topic",hint:"Link to a related page/topic on the site if applicable.",status:"optional",type:"content-ref"}]},{id:"management_team",name:"Management Team",machine:"management_team",group:"People & Organisation",icon:"ti ti-user",color:"#EEF2F7",description:"Profiles for senior management and leadership team members shown in the Leadership section.",fields:[{label:"Full Name",machine:"title",hint:"The person's full name.",status:"required",type:"text"},{label:"Profile Picture",machine:"field_profile_picture",hint:"Headshot photo. Use a consistent portrait format.",status:"optional",type:"media-image"},{label:"Position / Title",machine:"field_positions",hint:"Select the job title from the Positions list.",status:"optional",type:"taxonomy"},{label:"Division",machine:"field_division",hint:"Select the division this person belongs to.",status:"optional",type:"taxonomy"},{label:"Description / Bio",machine:"field_body",hint:"Biography or description. Supports rich text and a short summary.",status:"optional",type:"rich-text"},{label:"Email Address",machine:"field_email_address",hint:"Official email address.",status:"optional",type:"email"}]},{id:"energy_commission_members",name:"EC Members",machine:"energy_commission_members",group:"People & Organisation",icon:"ti ti-award",color:"#FDE8E8",description:"Profiles for appointed Energy Commission board members. Includes an appointment date.",fields:[{label:"Full Name",machine:"title",hint:"The member's full name.",status:"required",type:"text"},{label:"Profile Picture",machine:"field_profile_picture",hint:"Headshot photo in portrait format.",status:"optional",type:"media-image"},{label:"Position / Title",machine:"field_positions",hint:"Select the member's role/title from the Positions list.",status:"optional",type:"taxonomy"},{label:"Date of Appointment",machine:"field_date_of_appointment",hint:"Enter the official appointment date as plain text (e.g. '1 January 2023').",status:"optional",type:"plain-text"},{label:"Description / Bio",machine:"field_body",hint:"Biography or description. Supports rich text and a short summary.",status:"optional",type:"rich-text"}]},{id:"staff",name:"Staff",machine:"staff",group:"People & Organisation",icon:"ti ti-users",color:"#F0EDE8",description:"Staff directory entries for ST employees. Used for internal contact listings.",fields:[{label:"Full Name",machine:"title",hint:"The staff member's full name.",status:"required",type:"text"},{label:"Position",machine:"field_positions",hint:"Select from the Positions taxonomy.",status:"optional",type:"taxonomy"},{label:"Division",machine:"field_division",hint:"Select the division this person belongs to.",status:"optional",type:"taxonomy"},{label:"Section",machine:"field_section",hint:"Select the specific section within the division.",status:"optional",type:"taxonomy"},{label:"Email Address",machine:"field_email_address",hint:"Official ST email address.",status:"optional",type:"email"},{label:"Telephone",machine:"field_telephone",hint:"Direct phone number including extension.",status:"optional",type:"phone"}]},{id:"section_contact",name:"Section Contact",machine:"section_contact",group:"People & Organisation",icon:"ti ti-mail",color:"#E8F7EE",description:"Contact information for a specific department or section.",fields:[{label:"Section Name",machine:"title",hint:"Name of the section or department.",status:"required",type:"text"},{label:"Division",machine:"field_division",hint:"Select the division this contact belongs to.",status:"optional",type:"taxonomy"},{label:"Email Address",machine:"field_email_address",hint:"Contact email for this section.",status:"optional",type:"email"}]},{id:"career",name:"Career",machine:"career",group:"Procurement & Licensing",icon:"ti ti-briefcase",color:"#FEF9E7",description:"Job vacancy and career opportunity postings with application date range and attachments.",fields:[{label:"Job Title",machine:"title",hint:"Name of the position or vacancy.",status:"required",type:"text"},{label:"Overview",machine:"field_overview",hint:"Full job description and requirements. Supports rich text.",status:"optional",type:"rich-text"},{label:"Application Period",machine:"field_date_range",hint:"Set the opening and closing dates for applications.",status:"optional",type:"date-range"},{label:"Attachment",machine:"field_file_attachment",hint:"Upload related documents (job description PDF, application form). Multiple allowed.",status:"optional",type:"media-doc",multiple:true}]},{id:"tender_quotation",name:"Tender / Quotation",machine:"tender_quotation",group:"Procurement & Licensing",icon:"ti ti-file-invoice",color:"#FDE8E8",description:"Procurement tender and quotation notices with reference codes, dates, and attachments.",fields:[{label:"Title",machine:"title",hint:"Full name or description of the tender/quotation.",status:"required",type:"text"},{label:"Reference Code",machine:"field_code",hint:"Official reference number (e.g. ST/PRO/2026/001).",status:"optional",type:"plain-text"},{label:"Type",machine:"field_type",hint:"Select whether this is a Tender or Quotation.",status:"optional",type:"dropdown"},{label:"Submission Period",machine:"field_start_and_end_date",hint:"Opening and closing dates for submission.",status:"optional",type:"date-range"},{label:"Notice Date",machine:"field_notice_date",hint:"Date the notice was officially issued.",status:"optional",type:"date"},{label:"Collection Date",machine:"field_collection_date",hint:"Deadline for document collection if applicable.",status:"optional",type:"date"},{label:"Advertisement Doc",machine:"field_ad_attachment",hint:"Upload the tender/quotation advertisement document.",status:"optional",type:"file"},{label:"Notice Document",machine:"field_notice_attachment",hint:"Upload the official notice document.",status:"optional",type:"file"}]},{id:"public_distribution_licensee",name:"Public Distribution Licensee",machine:"public_distribution_licensee",group:"Procurement & Licensing",icon:"ti ti-plug",color:"#EEF2F7",description:"Registry entries for licensed public electricity distribution companies.",fields:[{label:"Licensee Name",machine:"title",hint:"Full legal name of the licensee company.",status:"required",type:"text"},{label:"Address",machine:"field_licensee_address",hint:"Registered business address.",status:"optional",type:"plain-text"},{label:"Capacity (MW)",machine:"field_capacity",hint:"Licensed distribution capacity in megawatts. Enter as a number.",status:"optional",type:"number"},{label:"License Start Date",machine:"field_start_date",hint:"Date the license was granted.",status:"optional",type:"date"},{label:"License End Date",machine:"field_end_date",hint:"Date the license expires.",status:"optional",type:"date"}]},{id:"office_locations",name:"Office Locations",machine:"office_locations",group:"Location",icon:"ti ti-map-pin",color:"#FEF9E7",description:"ST office and branch contact details including address, phone, email, operating hours, and map pin.",fields:[{label:"Office Name",machine:"title",hint:"Name of the office or branch (e.g. 'ST Putrajaya HQ').",status:"required",type:"text"},{label:"Address",machine:"field_address",hint:"Full street address (street, city, postcode, state).",status:"optional",type:"address"},{label:"Telephone",machine:"field_telephone",hint:"Main phone number for this office.",status:"optional",type:"phone"},{label:"Fax",machine:"field_fax",hint:"Fax number if applicable.",status:"optional",type:"phone"},{label:"Email Address",machine:"field_email_address",hint:"Contact email for this office.",status:"optional",type:"email"},{label:"Operating Hours",machine:"field_operating_hours",hint:"E.g. 'Monday – Friday: 8:00am – 5:00pm'.",status:"optional",type:"plain-text"},{label:"Office Type",machine:"field_office_type",hint:"Select the type of office (HQ, Regional, Branch).",status:"optional",type:"taxonomy"},{label:"State",machine:"field_state",hint:"Select the Malaysian state this office is in.",status:"optional",type:"taxonomy"},{label:"Map Coordinates",machine:"field_lat_long",hint:"Latitude/longitude for the map pin. Contact dev team if unsure.",status:"optional",type:"geofield"}]}];
+/* ══════════════════════════════════════════════════════════════════════
+   GROUP CONFIG
+══════════════════════════════════════════════════════════════════════ */
+const GROUPS_CONFIG = [
+  { label:'Newsroom & Media',       icon:'ti-news',             color:'#3B82F6', colorSoft:'#EFF6FF',  desc:'News articles, press releases, events, and homepage highlights.' },
+  { label:'Knowledge & Resources',  icon:'ti-books',            color:'#10B981', colorSoft:'#F0FDF4',  desc:'FAQs, publications, policies, consultations, and topic pages.' },
+  { label:'Pages & Navigation',     icon:'ti-layout-dashboard', color:'#8B5CF6', colorSoft:'#F5F3FF',  desc:'Main section pages, About Us, and quicklink directories.' },
+  { label:'People & Organisation',  icon:'ti-users',            color:'#F59E0B', colorSoft:'#FFFBEB',  desc:'Staff profiles, management team, EC members, and contacts.' },
+  { label:'Procurement & Licensing',icon:'ti-file-invoice',     color:'#EF4444', colorSoft:'#FEF2F2',  desc:'Job vacancies, tenders, quotations, and licensees.' },
+  { label:'Location',               icon:'ti-map-pin',          color:'#14B8A6', colorSoft:'#F0FDFA',  desc:'ST office locations and contact details.' },
+];
 
-// ─── GROUP CONFIG ────────────────────────────────────────────────────────────
-var GROUP_ICONS = {
-  "Newsroom & Media":       '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2zm0 0H4a2 2 0 0 1-2-2V6"/><line x1="16" y1="8" x2="10" y2="8"/><line x1="16" y1="12" x2="10" y2="12"/><line x1="16" y1="16" x2="10" y2="16"/></svg>',
-  "Knowledge & Resources":  '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>',
-  "Pages & Navigation":     '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>',
-  "People & Organisation":  '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
-  "Procurement & Licensing":'<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>',
-  "Location":               '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>'
-};
+/* ══════════════════════════════════════════════════════════════════════
+   LOCAL DATA
+══════════════════════════════════════════════════════════════════════ */
+var DATA = [
+  {id:"newsroom",name:"Newsroom",machine:"newsroom",group:"Newsroom & Media",icon:"ti ti-news",color:"#FDE8E8",description:"The main content type for all news-related posts — press releases, events, announcements, workshops, ST statements, and media articles.",note:{kind:"tip",text:"Always set <strong>News Type</strong> and <strong>Publish Date</strong> — required for the post to appear in the right section."},taxonomyNote:"<strong>News Type</strong> controls where this post appears. Options: Press Releases, Announcement / Notice, ST Statements, ST@Media, Media Articles, Events, Workshops, News",fields:[{label:"Title",machine:"title",hint:"Headline of the article or announcement.",status:"required",type:"text"},{label:"Publish Date",machine:"field_publish_date",hint:"Official date shown as 'Issued' on the listing page.",status:"required",type:"date"},{label:"News Type",machine:"field_news_type",hint:"Category (e.g. Events, Press Releases). Determines section in Newsroom.",status:"required",type:"taxonomy"},{label:"Description",machine:"field_description",hint:"Short teaser text for listing cards. Plain text only.",status:"optional",type:"plain-text"},{label:"Content",machine:"field_content",hint:"Main body. Supports rich text, images, and formatting.",status:"optional",type:"rich-text"},{label:"Featured Image",machine:"field_featured_image",hint:"Main image on listing cards and article header.",status:"optional",type:"media-image"},{label:"File / Attachment",machine:"field_file",hint:"Attach a PDF. Shown as a download button.",status:"optional",type:"media-doc"},{label:"Location",machine:"field_location",hint:"For Events — enter venue or city (e.g. Putrajaya).",status:"optional",type:"plain-text"},{label:"External Links",machine:"field_external_links",hint:"Link to an external source. Enter URL and display label.",status:"optional",type:"link"},{label:"Featured",machine:"field_featured",hint:"Tick to feature as the large hero card in the News section.",status:"optional",type:"boolean"},{label:"Tags",machine:"field_tags",hint:"Add tags to group related content. Multiple allowed.",status:"optional",type:"taxonomy",multiple:true}]},
+  {id:"highlights",name:"Highlights",machine:"highlights",group:"Newsroom & Media",icon:"ti ti-star",color:"#FFF3E0",description:"Featured stories shown in the Highlights carousel on the homepage. Used for high-priority content needing extra visibility.",fields:[{label:"Title",machine:"title",hint:"Headline for the highlight card.",status:"required",type:"text"},{label:"Body",machine:"field_body",hint:"Main content. Supports rich text and summary.",status:"optional",type:"rich-text"},{label:"Featured Image",machine:"field_featured_image",hint:"Landscape image for the highlight card.",status:"optional",type:"media-image"},{label:"Links",machine:"field_links",hint:"CTA links (e.g. 'Read more'). Multiple allowed.",status:"optional",type:"link",multiple:true},{label:"Tags",machine:"field_h_tags",hint:"Internal categorisation tag.",status:"optional",type:"taxonomy"}]},
+  {id:"faq",name:"FAQ",machine:"faq",group:"Knowledge & Resources",icon:"ti ti-help-circle",color:"#E8F7EE",description:"Frequently asked questions. Each entry is one question-and-answer pair, organised by category and topic.",note:{kind:"info",text:"<strong>FAQ Category</strong> and <strong>Topic Tag</strong> control how this FAQ is grouped on the FAQ page. Both can have multiple values."},fields:[{label:"Title (Question)",machine:"title",hint:"Write as a full question, e.g. 'How do I apply for a license?'",status:"required",type:"text"},{label:"Answer",machine:"field_answers",hint:"Full answer. Supports rich text, tables, and links.",status:"optional",type:"rich-text"},{label:"Question (Long)",machine:"field_question_long",hint:"Use when the question needs multi-line context.",status:"optional",type:"plain-text"},{label:"Question with Images",machine:"field_question_with_images",hint:"Use when the question needs diagrams or charts.",status:"optional",type:"rich-text"},{label:"FAQ Category",machine:"field_faq_category",hint:"Filter tabs on FAQ page. Multiple allowed.",status:"optional",type:"taxonomy",multiple:true},{label:"Topic Tag",machine:"field_topic_tag",hint:"Assigns FAQ to a section in the FAQ hierarchy.",status:"optional",type:"taxonomy"},{label:"Topic Reference",machine:"field_topic_reference",hint:"Link to a related Topic page on the site.",status:"optional",type:"content-ref"},{label:"File Attachment",machine:"field_file_attachment",hint:"Attach supporting documents. Multiple allowed.",status:"optional",type:"media-doc",multiple:true},{label:"External Links",machine:"field_external_links",hint:"Link to an external resource.",status:"optional",type:"link"}]},
+  {id:"resource",name:"Resource",machine:"resource",group:"Knowledge & Resources",icon:"ti ti-file-description",color:"#EEF2F7",description:"Downloadable publications, reports, and magazines. Appears in Publications and Resources listing pages.",fields:[{label:"Title",machine:"title",hint:"Publication title, e.g. 'Energy Malaysia Vol. 27, 2025'.",status:"required",type:"text"},{label:"Summary",machine:"field_summary",hint:"Short description on listing cards.",status:"optional",type:"plain-text"},{label:"Resource Type",machine:"field_resource_type",hint:"Select type (e.g. Magazine, Annual Report).",status:"optional",type:"taxonomy"},{label:"Publication Date",machine:"field_publication_date",hint:"Official date this resource was issued.",status:"optional",type:"date"},{label:"Cover Image",machine:"field_featured_image",hint:"Cover thumbnail on listing cards.",status:"optional",type:"media-image"},{label:"File",machine:"field_file",hint:"Upload the PDF for download.",status:"optional",type:"media-doc"},{label:"External Link",machine:"field_external_links",hint:"Use if resource is hosted externally.",status:"optional",type:"link"},{label:"Topic Reference",machine:"field_topic_reference",hint:"Link to a related section/topic page.",status:"optional",type:"content-ref"}]},
+  {id:"policies",name:"Policies",machine:"policies",group:"Knowledge & Resources",icon:"ti ti-clipboard-list",color:"#FDE8E8",description:"Official regulatory policies, guidelines, and frameworks with attachments.",fields:[{label:"Title",machine:"title",hint:"Name of the policy or guideline.",status:"required",type:"text"},{label:"Description",machine:"field_body",hint:"Full description or content. Supports rich text and summary.",status:"optional",type:"rich-text"},{label:"Policy Category",machine:"field_policy_categories",hint:"Assign to relevant category for grouping.",status:"optional",type:"taxonomy"},{label:"Featured Image",machine:"field_featured_image",hint:"Optional cover image.",status:"optional",type:"media-image"},{label:"File Attachment",machine:"field_file_attachment",hint:"Attach policy document(s). Multiple allowed.",status:"optional",type:"media-doc",multiple:true}]},
+  {id:"consultation_hub",name:"Consultation Hub",machine:"consultation_hub",group:"Knowledge & Resources",icon:"ti ti-handshake",color:"#E8F7EE",description:"Public consultation documents and regulatory notices requiring attached key documents.",fields:[{label:"Title",machine:"title",hint:"Title of the consultation notice.",status:"required",type:"text"},{label:"Body",machine:"field_body",hint:"Full content of the consultation. Supports rich text.",status:"optional",type:"rich-text"},{label:"Key Documents",machine:"field_key_documents",hint:"Upload consultation documents. Multiple allowed.",status:"optional",type:"media-doc",multiple:true}]},
+  {id:"topic",name:"Topic",machine:"topic",group:"Knowledge & Resources",icon:"ti ti-folders",color:"#EEF2F7",description:"Sub-pages under a main Page. Used to organise detailed subject areas under a parent section.",fields:[{label:"Title",machine:"title",hint:"Name of the topic.",status:"required",type:"text"},{label:"Introduction",machine:"field_introduction",hint:"Brief intro paragraph shown at the top.",status:"optional",type:"plain-text"},{label:"Parent Page",machine:"field_parent",hint:"Link to the parent Page this topic belongs under.",status:"optional",type:"content-ref"},{label:"File Attachment",machine:"field_file_attachment",hint:"Attach supporting documents. Multiple allowed.",status:"optional",type:"media-doc",multiple:true}]},
+  {id:"page",name:"Page",machine:"page",group:"Pages & Navigation",icon:"ti ti-layout",color:"#F0EDE8",description:"Main section landing pages and standalone content pages. Layout managed via Layout Builder.",note:{kind:"warn",text:"Uses <strong>Layout Builder</strong> for content arrangement. Avoid editing the Layout section — contact the dev team for structural changes."},fields:[{label:"Title",machine:"title",hint:"Page title shown as main heading.",status:"required",type:"text"},{label:"Description",machine:"field_description",hint:"Short descriptive text for SEO and page intros.",status:"required",type:"plain-text"},{label:"Content",machine:"field_content",hint:"Main body content in rich text.",status:"optional",type:"rich-text"},{label:"Featured Image",machine:"field_featured_image",hint:"Hero or banner image.",status:"optional",type:"media-image"},{label:"Links",machine:"field_links",hint:"Additional links on the page. Multiple allowed.",status:"optional",type:"link",multiple:true},{label:"Tags",machine:"field_tags",hint:"Tag for grouping with related content.",status:"optional",type:"taxonomy",multiple:true}]},
+  {id:"about_us",name:"About Us",machine:"about_us",group:"Pages & Navigation",icon:"ti ti-building",color:"#FDE8E8",description:"Content for the About Us section — organisational background, mission, and vision.",fields:[{label:"Title",machine:"title",hint:"Section title.",status:"required",type:"text"},{label:"Body",machine:"field_body",hint:"Main content with rich text and optional summary.",status:"optional",type:"rich-text"},{label:"Image",machine:"field_image",hint:"Supporting image for this About Us section.",status:"optional",type:"media-image"}]},
+  {id:"quicklinks",name:"Quicklinks",machine:"quicklinks",group:"Pages & Navigation",icon:"ti ti-bolt",color:"#E8F7EE",description:"External agency or partner links in the Quicklinks section on the homepage, grouped by category.",fields:[{label:"Agency Name",machine:"title",hint:"Name of the agency or organisation.",status:"required",type:"text"},{label:"Description",machine:"field_description",hint:"One-line description shown below the name.",status:"optional",type:"plain-text"},{label:"Logo",machine:"field_logo",hint:"Agency logo used as thumbnail.",status:"optional",type:"media-image"},{label:"Link",machine:"field_links",hint:"URL of agency website. Multiple allowed.",status:"optional",type:"link",multiple:true},{label:"Quicklink Category",machine:"field_quicklink_category",hint:"Group (e.g. Government & Policy, National Energy Utilities).",status:"optional",type:"taxonomy"},{label:"Topic",machine:"field_topic",hint:"Link to a related page/topic if applicable.",status:"optional",type:"content-ref"}]},
+  {id:"management_team",name:"Management Team",machine:"management_team",group:"People & Organisation",icon:"ti ti-user",color:"#EEF2F7",description:"Profiles for senior management and leadership team members shown in the Leadership section.",fields:[{label:"Full Name",machine:"title",hint:"The person's full name.",status:"required",type:"text"},{label:"Profile Picture",machine:"field_profile_picture",hint:"Headshot photo in portrait format.",status:"optional",type:"media-image"},{label:"Position / Title",machine:"field_positions",hint:"Select job title from the Positions list.",status:"optional",type:"taxonomy"},{label:"Division",machine:"field_division",hint:"Select the division this person belongs to.",status:"optional",type:"taxonomy"},{label:"Description / Bio",machine:"field_body",hint:"Biography. Supports rich text and summary.",status:"optional",type:"rich-text"},{label:"Email Address",machine:"field_email_address",hint:"Official email address.",status:"optional",type:"email"}]},
+  {id:"energy_commission_members",name:"EC Members",machine:"energy_commission_members",group:"People & Organisation",icon:"ti ti-award",color:"#FDE8E8",description:"Profiles for appointed Energy Commission board members. Includes an appointment date.",fields:[{label:"Full Name",machine:"title",hint:"The member's full name.",status:"required",type:"text"},{label:"Profile Picture",machine:"field_profile_picture",hint:"Headshot photo in portrait format.",status:"optional",type:"media-image"},{label:"Position / Title",machine:"field_positions",hint:"Select role/title from the Positions list.",status:"optional",type:"taxonomy"},{label:"Date of Appointment",machine:"field_date_of_appointment",hint:"Official appointment date as plain text (e.g. '1 January 2023').",status:"optional",type:"plain-text"},{label:"Description / Bio",machine:"field_body",hint:"Biography. Supports rich text and summary.",status:"optional",type:"rich-text"}]},
+  {id:"staff",name:"Staff",machine:"staff",group:"People & Organisation",icon:"ti ti-users",color:"#F0EDE8",description:"Staff directory entries for ST employees. Used for internal contact listings.",fields:[{label:"Full Name",machine:"title",hint:"The staff member's full name.",status:"required",type:"text"},{label:"Position",machine:"field_positions",hint:"Select from Positions taxonomy.",status:"optional",type:"taxonomy"},{label:"Division",machine:"field_division",hint:"Select the division.",status:"optional",type:"taxonomy"},{label:"Section",machine:"field_section",hint:"Select the specific section within the division.",status:"optional",type:"taxonomy"},{label:"Email Address",machine:"field_email_address",hint:"Official ST email.",status:"optional",type:"email"},{label:"Telephone",machine:"field_telephone",hint:"Direct phone including extension.",status:"optional",type:"phone"}]},
+  {id:"section_contact",name:"Section Contact",machine:"section_contact",group:"People & Organisation",icon:"ti ti-mail",color:"#E8F7EE",description:"Contact information for a specific department or section.",fields:[{label:"Section Name",machine:"title",hint:"Name of the section or department.",status:"required",type:"text"},{label:"Division",machine:"field_division",hint:"Select the division this contact belongs to.",status:"optional",type:"taxonomy"},{label:"Email Address",machine:"field_email_address",hint:"Contact email for this section.",status:"optional",type:"email"}]},
+  {id:"career",name:"Career",machine:"career",group:"Procurement & Licensing",icon:"ti ti-briefcase",color:"#FEF9E7",description:"Job vacancy and career opportunity postings with application date range and attachments.",fields:[{label:"Job Title",machine:"title",hint:"Name of the position or vacancy.",status:"required",type:"text"},{label:"Overview",machine:"field_overview",hint:"Full job description and requirements. Supports rich text.",status:"optional",type:"rich-text"},{label:"Application Period",machine:"field_date_range",hint:"Opening and closing dates for applications.",status:"optional",type:"date-range"},{label:"Attachment",machine:"field_file_attachment",hint:"Upload related documents. Multiple allowed.",status:"optional",type:"media-doc",multiple:true}]},
+  {id:"tender_quotation",name:"Tender / Quotation",machine:"tender_quotation",group:"Procurement & Licensing",icon:"ti ti-file-invoice",color:"#FDE8E8",description:"Procurement tender and quotation notices with reference codes, dates, and attachments.",fields:[{label:"Title",machine:"title",hint:"Full name or description of the tender/quotation.",status:"required",type:"text"},{label:"Reference Code",machine:"field_code",hint:"Official reference number (e.g. ST/PRO/2026/001).",status:"optional",type:"plain-text"},{label:"Type",machine:"field_type",hint:"Select Tender or Quotation.",status:"optional",type:"dropdown"},{label:"Submission Period",machine:"field_start_and_end_date",hint:"Opening and closing dates for submission.",status:"optional",type:"date-range"},{label:"Notice Date",machine:"field_notice_date",hint:"Date the notice was officially issued.",status:"optional",type:"date"},{label:"Collection Date",machine:"field_collection_date",hint:"Deadline for document collection.",status:"optional",type:"date"},{label:"Advertisement Doc",machine:"field_ad_attachment",hint:"Upload the advertisement document.",status:"optional",type:"file"},{label:"Notice Document",machine:"field_notice_attachment",hint:"Upload the official notice document.",status:"optional",type:"file"}]},
+  {id:"public_distribution_licensee",name:"Public Distribution Licensee",machine:"public_distribution_licensee",group:"Procurement & Licensing",icon:"ti ti-plug",color:"#EEF2F7",description:"Registry entries for licensed public electricity distribution companies.",fields:[{label:"Licensee Name",machine:"title",hint:"Full legal name of the licensee company.",status:"required",type:"text"},{label:"Address",machine:"field_licensee_address",hint:"Registered business address.",status:"optional",type:"plain-text"},{label:"Capacity (MW)",machine:"field_capacity",hint:"Licensed distribution capacity in MW.",status:"optional",type:"number"},{label:"License Start Date",machine:"field_start_date",hint:"Date the license was granted.",status:"optional",type:"date"},{label:"License End Date",machine:"field_end_date",hint:"Date the license expires.",status:"optional",type:"date"}]},
+  {id:"office_locations",name:"Office Locations",machine:"office_locations",group:"Location",icon:"ti ti-map-pin",color:"#FEF9E7",description:"ST office and branch contact details including address, phone, email, operating hours, and map coordinates.",fields:[{label:"Office Name",machine:"title",hint:"Name of the office (e.g. 'ST Putrajaya HQ').",status:"required",type:"text"},{label:"Address",machine:"field_address",hint:"Full street address (street, city, postcode, state).",status:"optional",type:"address"},{label:"Telephone",machine:"field_telephone",hint:"Main phone number for this office.",status:"optional",type:"phone"},{label:"Fax",machine:"field_fax",hint:"Fax number if applicable.",status:"optional",type:"phone"},{label:"Email Address",machine:"field_email_address",hint:"Contact email.",status:"optional",type:"email"},{label:"Operating Hours",machine:"field_operating_hours",hint:"e.g. 'Monday – Friday: 8:00am – 5:00pm'.",status:"optional",type:"plain-text"},{label:"Office Type",machine:"field_office_type",hint:"Select HQ, Regional, or Branch.",status:"optional",type:"taxonomy"},{label:"State",machine:"field_state",hint:"Select the Malaysian state.",status:"optional",type:"taxonomy"},{label:"Map Coordinates",machine:"field_lat_long",hint:"Lat/long for map pin. Contact dev team if unsure.",status:"optional",type:"geofield"}]}
+];
 
-var TYPE_LABELS = {
-  "text":"Text","plain-text":"Plain Text","rich-text":"Rich Text","date":"Date",
-  "date-range":"Date Range","taxonomy":"Taxonomy","media-image":"Image",
-  "media-doc":"Document","link":"Link","boolean":"Toggle","content-ref":"Content Ref",
-  "email":"Email","phone":"Phone","number":"Number","address":"Address",
-  "geofield":"Geo","dropdown":"Dropdown","file":"File"
-};
+const FIELD_TYPES = ["text","plain-text","rich-text","date","date-range","taxonomy","media-image","media-doc","link","boolean","content-ref","email","phone","number","address","geofield","dropdown","file"];
+const TYPE_LABELS = {text:"Text","plain-text":"Plain Text","rich-text":"Rich Text",date:"Date","date-range":"Date Range",taxonomy:"Taxonomy","media-image":"Image","media-doc":"Document",link:"Link",boolean:"Toggle","content-ref":"Content Ref",email:"Email",phone:"Phone",number:"Number",address:"Address",geofield:"Geo",dropdown:"Dropdown",file:"File"};
 
-// ─── BUILD SIDEBAR ───────────────────────────────────────────────────────────
-var activeId = null;
-var API_BASE = "http://localhost:3001/api";
-var SIDEBAR_WIDTH = 240;
-var SIDEBAR_COLLAPSED_WIDTH = 64;
-var sidebarCollapsed = false;
-var groupAccordionState = {};
-
-function applySidebarState() {
-  var sidebar = document.getElementById("sidebar");
-  var main = document.getElementById("main-content");
-  var toggle = document.getElementById("sidebar-toggle");
-  if (!sidebar || !main || !toggle) return;
-
-  if (sidebarCollapsed) {
-    sidebar.style.width = SIDEBAR_COLLAPSED_WIDTH + "px";
-    sidebar.style.borderRight = "1px solid #E2E8F0";
-    main.style.marginLeft = SIDEBAR_COLLAPSED_WIDTH + "px";
-    toggle.style.left = (SIDEBAR_COLLAPSED_WIDTH - 22) + "px";
-    document.getElementById("sidebar-toggle-icon").textContent = "›";
-  } else {
-    sidebar.style.width = SIDEBAR_WIDTH + "px";
-    sidebar.style.borderRight = "1px solid #E2E8F0";
-    main.style.marginLeft = SIDEBAR_WIDTH + "px";
-    toggle.style.left = (SIDEBAR_WIDTH - 22) + "px";
-    document.getElementById("sidebar-toggle-icon").textContent = "‹";
-  }
-}
-
-function toggleSidebar() {
-  sidebarCollapsed = !sidebarCollapsed;
-  sessionStorage.setItem("sidebarCollapsed", sidebarCollapsed ? "1" : "0");
-  applySidebarState();
-  buildSidebar(document.getElementById("search-input").value.trim().toLowerCase() || null);
-}
-
-function updateStats() {
-  document.getElementById("stat-total").textContent = String(DATA.length);
-}
-
-function showToast(message, type) {
-  var root = document.getElementById("toast-root");
-  if (!root) {
-    root = document.createElement("div");
-    root.id = "toast-root";
-    root.style.cssText = "position:fixed;right:16px;bottom:16px;z-index:300;display:grid;gap:8px;max-width:340px;";
-    document.body.appendChild(root);
-  }
-  var tone = type === "error"
-    ? "background:#FEF2F2;border:1px solid #FECACA;color:#991B1B;"
-    : "background:#ECFDF5;border:1px solid #A7F3D0;color:#065F46;";
-  var toast = document.createElement("div");
-  toast.style.cssText = "padding:10px 12px;border-radius:8px;font-size:12.5px;box-shadow:0 6px 20px rgba(15,23,42,.12);" + tone;
-  toast.textContent = message;
-  root.appendChild(toast);
-  setTimeout(function () {
-    toast.style.opacity = "0";
-    toast.style.transition = "opacity .2s ease";
-    setTimeout(function () { toast.remove(); }, 220);
-  }, 2200);
-}
+/* ══════════════════════════════════════════════════════════════════════
+   API
+══════════════════════════════════════════════════════════════════════ */
+const API_BASE = 'http://localhost:3001/api';
 
 async function apiRequest(url, options) {
-  var response = await fetch(API_BASE + url, options || {});
-  if (!response.ok) {
-    var body = await response.json().catch(function () {
-      return {};
-    });
-    throw new Error(body.error || "Request failed");
-  }
-  if (response.status === 204) return null;
-  return response.json();
+  const res = await fetch(API_BASE + url, options || {});
+  if (!res.ok) { const b = await res.json().catch(()=>({})); throw new Error(b.error||'Request failed'); }
+  if (res.status === 204) return null;
+  return res.json();
 }
 
 async function loadData() {
-  DATA = await apiRequest("/content-types");
-  updateStats();
+  DATA = await apiRequest('/content-types');
+  updateStatCount();
 }
 
-function ensureContentTypeModal() {
-  if (document.getElementById("content-type-modal-overlay")) return;
-  var overlay = document.createElement("div");
-  overlay.id = "content-type-modal-overlay";
-  overlay.style.cssText = "display:none;position:fixed;inset:0;background:rgba(15,23,42,.55);z-index:210;align-items:center;justify-content:center;padding:16px;";
-  overlay.innerHTML =
-    '<div style="width:100%;max-width:620px;background:white;border:1px solid #E2E8F0;border-radius:10px;box-shadow:0 14px 40px rgba(2,6,23,.2);">' +
-      '<div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid #E2E8F0;">' +
-        '<strong id="content-type-modal-title" style="font-size:14px;color:#1E1E1E;">Content Type</strong>' +
-        '<button id="content-type-modal-close" type="button" style="background:white;border:1px solid #E2E8F0;border-radius:6px;padding:4px 8px;cursor:pointer;">Close</button>' +
-      '</div>' +
-      '<form id="content-type-modal-form" style="padding:16px;display:grid;gap:10px;">' +
-        '<input name="id" placeholder="ID (e.g. newsroom_custom)" required style="padding:8px 10px;border:1px solid #CBD5E1;border-radius:6px;font-size:13px;">' +
-        '<input name="name" placeholder="Name" required style="padding:8px 10px;border:1px solid #CBD5E1;border-radius:6px;font-size:13px;">' +
-        '<input name="machine" placeholder="Machine name" required style="padding:8px 10px;border:1px solid #CBD5E1;border-radius:6px;font-size:13px;">' +
-        '<input name="group" placeholder="Group" required style="padding:8px 10px;border:1px solid #CBD5E1;border-radius:6px;font-size:13px;">' +
-        '<input name="icon" placeholder="Icon class (e.g. ti ti-file)" style="padding:8px 10px;border:1px solid #CBD5E1;border-radius:6px;font-size:13px;">' +
-        '<input name="color" placeholder="Color (e.g. #EEF2F7)" style="padding:8px 10px;border:1px solid #CBD5E1;border-radius:6px;font-size:13px;">' +
-        '<textarea name="description" placeholder="Description" rows="3" style="padding:8px 10px;border:1px solid #CBD5E1;border-radius:6px;font-size:13px;resize:vertical;"></textarea>' +
-        '<div style="display:flex;justify-content:flex-end;gap:8px;margin-top:4px;">' +
-          '<button type="button" id="content-type-modal-cancel" style="background:white;border:1px solid #E2E8F0;color:#334155;padding:7px 12px;border-radius:6px;cursor:pointer;">Cancel</button>' +
-          '<button type="submit" style="background:#1E1E1E;border:1px solid #1E1E1E;color:white;padding:7px 12px;border-radius:6px;cursor:pointer;">Save</button>' +
-        '</div>' +
-      '</form>' +
-    '</div>';
-  document.body.appendChild(overlay);
-
-  function close() { overlay.style.display = "none"; }
-  overlay.querySelector("#content-type-modal-close").onclick = close;
-  overlay.querySelector("#content-type-modal-cancel").onclick = close;
-  overlay.addEventListener("click", function (event) {
-    if (event.target === overlay) close();
-  });
+/* ══════════════════════════════════════════════════════════════════════
+   TOAST
+══════════════════════════════════════════════════════════════════════ */
+function showToast(msg, type) {
+  const root = document.getElementById('toast-root');
+  const el = document.createElement('div');
+  el.className = 'toast toast-' + (type || 'success');
+  el.textContent = msg;
+  root.appendChild(el);
+  setTimeout(() => { el.style.opacity = '0'; setTimeout(() => el.remove(), 220); }, 2500);
 }
 
-function openContentTypeModal(config) {
-  ensureContentTypeModal();
-  var overlay = document.getElementById("content-type-modal-overlay");
-  var form = document.getElementById("content-type-modal-form");
-  var title = document.getElementById("content-type-modal-title");
+/* ══════════════════════════════════════════════════════════════════════
+   MODAL HELPERS
+══════════════════════════════════════════════════════════════════════ */
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+function openModal(id)  { document.getElementById(id).classList.add('open');    }
 
-  title.textContent = config.title || "Content Type";
-  form.id.value = config.values.id || "";
-  form.name.value = config.values.name || "";
-  form.machine.value = config.values.machine || "";
-  form.group.value = config.values.group || "";
-  form.icon.value = config.values.icon || "ti ti-file";
-  form.color.value = config.values.color || "#EEF2F7";
-  form.description.value = config.values.description || "";
-  form.id.disabled = Boolean(config.disableId);
-  overlay.style.display = "flex";
+// Close on backdrop click
+document.querySelectorAll('.modal-overlay').forEach(m => {
+  m.addEventListener('click', e => { if (e.target === m) m.classList.remove('open'); });
+});
 
-  form.onsubmit = function (event) {
-    event.preventDefault();
-    var payload = {
-      id: form.id.value.trim(),
-      name: form.name.value.trim(),
-      machine: form.machine.value.trim(),
-      group: form.group.value.trim(),
-      icon: form.icon.value.trim() || "ti ti-file",
-      color: form.color.value.trim() || "#EEF2F7",
-      description: form.description.value.trim()
-    };
-    if (!payload.name || !payload.machine || !payload.group || (!config.disableId && !payload.id)) return;
-    overlay.style.display = "none";
-    config.onSubmit(payload);
+/* ══════════════════════════════════════════════════════════════════════
+   CONTENT TYPE CRUD
+══════════════════════════════════════════════════════════════════════ */
+let _ctModalSubmit = null;
+
+function openCreateContentTypeModal() {
+  const f = document.getElementById('ct-modal-form');
+  document.getElementById('ct-modal-title').textContent = 'Add Content Type';
+  f.id.value = ''; f.id.disabled = false;
+  f.name.value = ''; f.machine.value = ''; f.group.value = '';
+  f.icon.value = 'ti ti-file'; f.color.value = '#EEF2F7'; f.description.value = '';
+  openModal('ct-modal');
+  _ctModalSubmit = async (p) => {
+    try {
+      await apiRequest('/content-types', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({...p, fields:[]}) });
+      await loadData(); buildSidebar(); buildGroupCards(); navigateTo(p.id);
+      showToast('Content type created.', 'success');
+    } catch(e) { showToast(e.message, 'error'); }
   };
 }
 
-async function createContentType() {
-  openContentTypeModal({
-    title: "Add Content Type",
-    values: { icon: "ti ti-file", color: "#EEF2F7", group: "Custom" },
-    disableId: false,
-    onSubmit: async function (payload) {
-      try {
-        await apiRequest("/content-types", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            id: payload.id,
-            name: payload.name,
-            machine: payload.machine,
-            group: payload.group,
-            icon: payload.icon,
-            color: payload.color,
-            description: payload.description,
-            fields: []
-          })
-        });
-        await loadData();
-        buildSidebar(null);
-        renderWelcome();
-        selectSection(payload.id);
-        showToast("Content type created.", "success");
-      } catch (error) {
-        showToast(error.message || "Failed to create content type.", "error");
-      }
-    }
-  });
+function openEditContentTypeModal(id) {
+  const cur = DATA.find(x => x.id === id); if (!cur) return;
+  const f = document.getElementById('ct-modal-form');
+  document.getElementById('ct-modal-title').textContent = 'Edit Content Type';
+  f.id.value = cur.id; f.id.disabled = true;
+  f.name.value = cur.name; f.machine.value = cur.machine;
+  f.group.value = cur.group; f.icon.value = cur.icon || 'ti ti-file';
+  f.color.value = cur.color || '#EEF2F7'; f.description.value = cur.description || '';
+  openModal('ct-modal');
+  _ctModalSubmit = async (p) => {
+    try {
+      await apiRequest('/content-types/' + encodeURIComponent(id), { method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify({name:p.name,group:p.group,machine:p.machine,icon:p.icon,color:p.color,description:p.description,fields:cur.fields||[]}) });
+      await loadData(); buildSidebar(); navigateTo(id);
+      showToast('Content type updated.', 'success');
+    } catch(e) { showToast(e.message, 'error'); }
+  };
 }
 
-async function editContentType(id) {
-  var current = DATA.find(function (item) { return item.id === id; });
-  if (!current) return;
-  openContentTypeModal({
-    title: "Edit Content Type",
-    values: current,
-    disableId: true,
-    onSubmit: async function (payload) {
-      try {
-        await apiRequest("/content-types/" + encodeURIComponent(id), {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            name: payload.name,
-            group: payload.group,
-            description: payload.description,
-            machine: payload.machine,
-            icon: payload.icon,
-            color: payload.color,
-            taxonomyNote: current.taxonomyNote || null,
-            note: current.note || null,
-            fields: current.fields || []
-          })
-        });
-        await loadData();
-        buildSidebar(document.getElementById("search-input").value.trim().toLowerCase() || null);
-        selectSection(id);
-        showToast("Content type updated.", "success");
-      } catch (error) {
-        showToast(error.message || "Failed to update content type.", "error");
-      }
-    }
-  });
-}
+document.getElementById('ct-modal-form').onsubmit = e => {
+  e.preventDefault();
+  const f = e.target;
+  const p = { id:f.id.value.trim(), name:f.name.value.trim(), machine:f.machine.value.trim(), group:f.group.value.trim(), icon:f.icon.value.trim()||'ti ti-file', color:f.color.value.trim()||'#EEF2F7', description:f.description.value.trim() };
+  if (!p.name || !p.machine || !p.group) return;
+  closeModal('ct-modal');
+  if (_ctModalSubmit) _ctModalSubmit(p);
+};
 
 async function deleteContentType(id) {
-  if (!confirm("Delete this content type? This cannot be undone.")) return;
+  if (!confirm('Delete this content type? This cannot be undone.')) return;
   try {
-    await apiRequest("/content-types/" + encodeURIComponent(id), { method: "DELETE" });
-    activeId = null;
-    await loadData();
-    buildSidebar(document.getElementById("search-input").value.trim().toLowerCase() || null);
-    document.getElementById("section-view").style.display = "none";
-    document.getElementById("welcome-view").style.display = "block";
-    renderWelcome();
-    showToast("Content type deleted.", "success");
-  } catch (error) {
-    showToast(error.message || "Failed to delete content type.", "error");
-  }
+    await apiRequest('/content-types/' + encodeURIComponent(id), { method:'DELETE' });
+    await loadData(); buildSidebar(); buildGroupCards(); showWelcome();
+    showToast('Content type deleted.', 'success');
+  } catch(e) { showToast(e.message, 'error'); }
 }
 
-var FIELD_TYPES = [
-  "text","plain-text","rich-text","date","date-range","taxonomy","media-image",
-  "media-doc","link","boolean","content-ref","email","phone","number","address",
-  "geofield","dropdown","file"
-];
+/* ══════════════════════════════════════════════════════════════════════
+   FIELD CRUD
+══════════════════════════════════════════════════════════════════════ */
+// Populate type select
+const typeSelect = document.getElementById('field-type-select');
+typeSelect.innerHTML = FIELD_TYPES.map(t => `<option value="${t}">${TYPE_LABELS[t]||t} (${t})</option>`).join('');
 
-function ensureFieldModal() {
-  if (document.getElementById("field-modal-overlay")) return;
-  var overlay = document.createElement("div");
-  overlay.id = "field-modal-overlay";
-  overlay.style.cssText = "display:none;position:fixed;inset:0;background:rgba(15,23,42,.55);z-index:200;align-items:center;justify-content:center;padding:16px;";
-  overlay.innerHTML =
-    '<div style="width:100%;max-width:560px;background:white;border:1px solid #E2E8F0;border-radius:10px;box-shadow:0 14px 40px rgba(2,6,23,.2);">' +
-      '<div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid #E2E8F0;">' +
-        '<strong id="field-modal-title" style="font-size:14px;color:#1E1E1E;">Field</strong>' +
-        '<button id="field-modal-close" type="button" style="background:white;border:1px solid #E2E8F0;border-radius:6px;padding:4px 8px;cursor:pointer;">Close</button>' +
-      '</div>' +
-      '<form id="field-modal-form" style="padding:16px;display:grid;gap:10px;">' +
-        '<input name="label" placeholder="Field label" required style="padding:8px 10px;border:1px solid #CBD5E1;border-radius:6px;font-size:13px;">' +
-        '<input name="machine" placeholder="Machine name (field_example)" required style="padding:8px 10px;border:1px solid #CBD5E1;border-radius:6px;font-size:13px;">' +
-        '<textarea name="hint" placeholder="Hint" rows="3" style="padding:8px 10px;border:1px solid #CBD5E1;border-radius:6px;font-size:13px;resize:vertical;"></textarea>' +
-        '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">' +
-          '<select name="status" style="padding:8px 10px;border:1px solid #CBD5E1;border-radius:6px;font-size:13px;"><option value="optional">optional</option><option value="required">required</option></select>' +
-          '<select name="type" style="padding:8px 10px;border:1px solid #CBD5E1;border-radius:6px;font-size:13px;"></select>' +
-        '</div>' +
-        '<label style="display:flex;gap:8px;align-items:center;font-size:12px;color:#334155;"><input name="multiple" type="checkbox"> Multiple values</label>' +
-        '<div style="display:flex;justify-content:flex-end;gap:8px;margin-top:4px;">' +
-          '<button type="button" id="field-modal-cancel" style="background:white;border:1px solid #E2E8F0;color:#334155;padding:7px 12px;border-radius:6px;cursor:pointer;">Cancel</button>' +
-          '<button type="submit" style="background:#1E1E1E;border:1px solid #1E1E1E;color:white;padding:7px 12px;border-radius:6px;cursor:pointer;">Save</button>' +
-        '</div>' +
-      '</form>' +
-    '</div>';
-  document.body.appendChild(overlay);
+let _fieldModalSubmit = null;
 
-  var typeSelect = overlay.querySelector('select[name="type"]');
-  typeSelect.innerHTML = FIELD_TYPES.map(function (type) {
-    var label = TYPE_LABELS[type] || type;
-    return '<option value="' + type + '">' + label + " (" + type + ")" + '</option>';
-  }).join("");
-
-  function close() { overlay.style.display = "none"; }
-  overlay.querySelector("#field-modal-close").onclick = close;
-  overlay.querySelector("#field-modal-cancel").onclick = close;
-  overlay.addEventListener("click", function (event) {
-    if (event.target === overlay) close();
-  });
-}
-
-function openFieldModal(config) {
-  ensureFieldModal();
-  var overlay = document.getElementById("field-modal-overlay");
-  var form = document.getElementById("field-modal-form");
-  var title = document.getElementById("field-modal-title");
-
-  title.textContent = config.title || "Field";
-  form.label.value = config.values.label || "";
-  form.machine.value = config.values.machine || "";
-  form.hint.value = config.values.hint || "";
-  form.status.value = config.values.status || "optional";
-  form.type.value = config.values.type || "text";
-  form.multiple.checked = Boolean(config.values.multiple);
-  overlay.style.display = "flex";
-
-  form.onsubmit = function (event) {
-    event.preventDefault();
-    var payload = {
-      label: form.label.value.trim(),
-      machine: form.machine.value.trim(),
-      hint: form.hint.value.trim(),
-      status: form.status.value,
-      type: form.type.value,
-      multiple: form.multiple.checked
-    };
-    if (!payload.label || !payload.machine) return;
-    overlay.style.display = "none";
-    config.onSubmit(payload);
+function openCreateFieldModal(ctId) {
+  const f = document.getElementById('field-modal-form');
+  document.getElementById('field-modal-title').textContent = 'Add Field';
+  f.label.value = ''; f.machine.value = ''; f.hint.value = '';
+  f.status.value = 'optional'; f.type.value = 'text'; f.multiple.checked = false;
+  openModal('field-modal');
+  _fieldModalSubmit = async (p) => {
+    try {
+      await apiRequest('/content-types/' + encodeURIComponent(ctId) + '/fields', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(p) });
+      await loadData(); buildSidebar(); navigateTo(ctId);
+      showToast('Field created.', 'success');
+    } catch(e) { showToast(e.message, 'error'); }
   };
 }
 
-async function createField(contentTypeId) {
-  openFieldModal({
-    title: "Add Field",
-    values: { status: "optional", type: "text", multiple: false },
-    onSubmit: async function (payload) {
-      try {
-        await apiRequest("/content-types/" + encodeURIComponent(contentTypeId) + "/fields", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
-        });
-        await loadData();
-        buildSidebar(document.getElementById("search-input").value.trim().toLowerCase() || null);
-        selectSection(contentTypeId);
-        showToast("Field created.", "success");
-      } catch (error) {
-        showToast(error.message || "Failed to create field.", "error");
-      }
-    }
-  });
+function openEditFieldModal(ctId, fieldId) {
+  const ct = DATA.find(x => x.id === ctId); if (!ct) return;
+  const cur = (ct.fields||[]).find(x => Number(x.id) === Number(fieldId)); if (!cur) return;
+  const f = document.getElementById('field-modal-form');
+  document.getElementById('field-modal-title').textContent = 'Edit Field';
+  f.label.value = cur.label; f.machine.value = cur.machine; f.hint.value = cur.hint||'';
+  f.status.value = cur.status||'optional'; f.type.value = cur.type||'text'; f.multiple.checked = !!cur.multiple;
+  openModal('field-modal');
+  _fieldModalSubmit = async (p) => {
+    try {
+      await apiRequest('/content-types/' + encodeURIComponent(ctId) + '/fields/' + encodeURIComponent(fieldId), { method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify(p) });
+      await loadData(); buildSidebar(); navigateTo(ctId);
+      showToast('Field updated.', 'success');
+    } catch(e) { showToast(e.message, 'error'); }
+  };
 }
 
-async function editField(contentTypeId, fieldId) {
-  var contentType = DATA.find(function (item) { return item.id === contentTypeId; });
-  if (!contentType) return;
-  var current = (contentType.fields || []).find(function (field) { return Number(field.id) === Number(fieldId); });
-  if (!current) return;
-  openFieldModal({
-    title: "Edit Field",
-    values: current,
-    onSubmit: async function (payload) {
-      try {
-        await apiRequest(
-          "/content-types/" + encodeURIComponent(contentTypeId) + "/fields/" + encodeURIComponent(fieldId),
-          {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload)
-          },
-        );
-        await loadData();
-        buildSidebar(document.getElementById("search-input").value.trim().toLowerCase() || null);
-        selectSection(contentTypeId);
-        showToast("Field updated.", "success");
-      } catch (error) {
-        showToast(error.message || "Failed to update field.", "error");
-      }
-    }
-  });
-}
+document.getElementById('field-modal-form').onsubmit = e => {
+  e.preventDefault();
+  const f = e.target;
+  const p = { label:f.label.value.trim(), machine:f.machine.value.trim(), hint:f.hint.value.trim(), status:f.status.value, type:f.type.value, multiple:f.multiple.checked };
+  if (!p.label || !p.machine) return;
+  closeModal('field-modal');
+  if (_fieldModalSubmit) _fieldModalSubmit(p);
+};
 
-async function deleteField(contentTypeId, fieldId) {
-  if (!confirm("Delete this field?")) return;
+async function deleteField(ctId, fieldId) {
+  if (!confirm('Delete this field?')) return;
   try {
-    await apiRequest(
-      "/content-types/" + encodeURIComponent(contentTypeId) + "/fields/" + encodeURIComponent(fieldId),
-      { method: "DELETE" },
-    );
-    await loadData();
-    buildSidebar(document.getElementById("search-input").value.trim().toLowerCase() || null);
-    selectSection(contentTypeId);
-    showToast("Field deleted.", "success");
-  } catch (error) {
-    showToast(error.message || "Failed to delete field.", "error");
-  }
+    await apiRequest('/content-types/' + encodeURIComponent(ctId) + '/fields/' + encodeURIComponent(fieldId), { method:'DELETE' });
+    await loadData(); buildSidebar(); navigateTo(ctId);
+    showToast('Field deleted.', 'success');
+  } catch(e) { showToast(e.message, 'error'); }
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   SIDEBAR BUILD
+══════════════════════════════════════════════════════════════════════ */
+function getGroupCfg(label) {
+  return GROUPS_CONFIG.find(g => g.label === label) || { icon:'ti-layers', color:'#64748B', colorSoft:'#F8FAFC', desc:'' };
 }
 
 function buildSidebar(filter) {
-  var nav = document.getElementById('sidebar-nav');
+  const nav = document.getElementById('sb-nav');
+  const rail = document.getElementById('panel-rail');
   nav.innerHTML = '';
-  var groups = {};
-  DATA.forEach(function(s) {
-    if (!groups[s.group]) groups[s.group] = [];
-    groups[s.group].push(s);
+  rail.innerHTML = '';
+
+  // Build ordered group map
+  const groupMap = {};
+  DATA.forEach(ct => {
+    if (!groupMap[ct.group]) groupMap[ct.group] = [];
+    groupMap[ct.group].push(ct);
   });
 
-  var hasAny = false;
-  Object.keys(groups).forEach(function(g) {
-    var items = groups[g];
-    if (filter) items = items.filter(function(s){ return s.name.toLowerCase().includes(filter) || s.group.toLowerCase().includes(filter); });
+  // Order by GROUPS_CONFIG, then any remaining
+  const orderedGroups = [
+    ...GROUPS_CONFIG.map(g => g.label).filter(l => groupMap[l]),
+    ...Object.keys(groupMap).filter(l => !GROUPS_CONFIG.find(g => g.label === l))
+  ];
+
+  orderedGroups.forEach(groupLabel => {
+    let items = groupMap[groupLabel];
+    if (filter) items = items.filter(ct => ct.name.toLowerCase().includes(filter) || ct.group.toLowerCase().includes(filter));
     if (!items.length) return;
-    hasAny = true;
 
-    // Group label
-    var gl = document.createElement('div');
-    gl.className = 'group-label';
-    gl.title = g;
-    gl.innerHTML = sidebarCollapsed
-      ? (GROUP_ICONS[g] || '')
-      : '<span style="display:inline-flex;align-items:center;gap:6px;">' + (GROUP_ICONS[g]||'') + '<span>' + g + '</span></span><span style="margin-left:auto;color:#CBD5E1;font-size:9px;">' + (groupAccordionState[g] === false ? "▸" : "▾") + '</span>';
-    gl.style.cssText = sidebarCollapsed
-      ? 'font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#94A3B8;padding:16px 0 8px;display:flex;align-items:center;justify-content:center;'
-      : 'font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#94A3B8;padding:18px 16px 5px;display:flex;align-items:center;gap:6px;cursor:pointer;';
-    nav.appendChild(gl);
+    const cfg = getGroupCfg(groupLabel);
 
-    var groupItemsEl = document.createElement('div');
-    groupItemsEl.className = 'group-items';
-    if (groupAccordionState[g] === false && !sidebarCollapsed) {
-      groupItemsEl.style.display = 'none';
-    }
+    // --- Nav group ---
+    const groupEl = document.createElement('div');
+    groupEl.className = 'sb-group open';
+    groupEl.dataset.group = groupLabel;
 
-    if (!sidebarCollapsed) {
-      gl.onclick = function () {
-        var isOpen = groupAccordionState[g] !== false;
-        groupAccordionState[g] = !isOpen;
-        buildSidebar(filter || null);
-      };
-    }
+    const header = document.createElement('div');
+    header.className = 'sb-group-header';
+    header.innerHTML = `
+      <div class="sb-group-icon" style="background:${cfg.colorSoft};color:${cfg.color}"><i class="ti ${cfg.icon}"></i></div>
+      <div class="sb-group-label-wrap"><span class="sb-group-label">${groupLabel}<span class="sb-group-count">${items.length}</span></span></div>
+      <i class="ti ti-chevron-right sb-group-chevron"></i>`;
+    header.addEventListener('click', () => groupEl.classList.toggle('open'));
 
-    items.forEach(function(s) {
-      var el = document.createElement('div');
-      el.className = 'nav-item' + (s.id === activeId ? ' active' : '');
-      el.setAttribute('data-id', s.id);
-      el.title = s.name;
-      var req = s.fields.filter(function(f){ return f.status==='required'; }).length;
-      if (sidebarCollapsed) {
-        el.style.cssText = 'justify-content:center;padding:8px 0;';
-        el.innerHTML = '<i class="' + s.icon + '" style="font-size:17px;line-height:1;"></i>';
-      } else {
-        el.style.cssText = '';
-        el.innerHTML =
-          '<i class="' + s.icon + '" style="font-size:16px;line-height:1;flex-shrink:0;"></i>' +
-          '<span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + s.name + '</span>' +
-          '<span style="font-size:10px;background:#F1F5F9;color:#94A3B8;padding:1px 6px;border-radius:10px;flex-shrink:0;">' + s.fields.length + '</span>';
-      }
-      el.onclick = function(){ selectSection(s.id); };
-      groupItemsEl.appendChild(el);
+    const itemsEl = document.createElement('div');
+    itemsEl.className = 'sb-group-items';
+
+    items.forEach(ct => {
+      const item = document.createElement('div');
+      item.className = 'sb-item' + (ct.id === activeId ? ' active' : '');
+      item.dataset.id = ct.id;
+      item.innerHTML = `<span class="sb-item-label">${ct.name}</span>`;
+      item.addEventListener('click', () => navigateTo(ct.id));
+      itemsEl.appendChild(item);
     });
-    nav.appendChild(groupItemsEl);
-  });
 
-  document.getElementById('no-results').style.display = hasAny ? 'none' : 'block';
+    groupEl.appendChild(header);
+    groupEl.appendChild(itemsEl);
+    nav.appendChild(groupEl);
+
+    // --- Rail item ---
+    const railItem = document.createElement('div');
+    railItem.className = 'rail-item' + (items.some(ct => ct.id === activeId) ? ' has-active' : '');
+    railItem.dataset.tooltip = groupLabel;
+    railItem.innerHTML = `<i class="ti ${cfg.icon}" style="color:${cfg.color}"></i>`;
+    railItem.addEventListener('click', () => { collapseSidebar(false); navigateTo(items[0].id); });
+    rail.appendChild(railItem);
+  });
 }
 
-// ─── SELECT SECTION ──────────────────────────────────────────────────────────
-function selectSection(id) {
+/* ══════════════════════════════════════════════════════════════════════
+   SIDEBAR COLLAPSE
+══════════════════════════════════════════════════════════════════════ */
+const sidebar = document.getElementById('sidebar');
+document.getElementById('sb-toggle').addEventListener('click', () => collapseSidebar(!sidebar.classList.contains('collapsed')));
+
+function collapseSidebar(collapse) {
+  sidebar.classList.toggle('collapsed', collapse);
+  sessionStorage.setItem('sbCollapsed', collapse ? '1' : '0');
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   NAVIGATION
+══════════════════════════════════════════════════════════════════════ */
+let activeId = null;
+
+function navigateTo(id) {
   activeId = id;
-  var s = DATA.find(function(x){ return x.id === id; });
-  if (!s) return;
-
-  // Update sidebar active
-  document.querySelectorAll('.nav-item').forEach(function(el){
-    el.classList.toggle('active', el.getAttribute('data-id') === id);
+  document.querySelectorAll('.sb-item').forEach(el => el.classList.toggle('active', el.dataset.id === id));
+  document.querySelectorAll('.rail-item').forEach(el => {
+    const grp = DATA.find(ct => ct.id === id)?.group;
+    const cfg = getGroupCfg(grp || '');
+    el.classList.toggle('has-active', el.dataset.tooltip === grp);
   });
-
-  var area = document.getElementById('content-area');
-  area.classList.add('fading');
-  setTimeout(function(){
-    renderSection(s);
-    area.classList.remove('fading');
-  }, 100);
-
-  // Scroll sidebar item into view
-  var activeEl = document.querySelector('.nav-item.active');
-  if (activeEl) activeEl.scrollIntoView({block:'nearest'});
+  document.getElementById('view-welcome').style.display = 'none';
+  document.getElementById('view-detail').style.display = 'block';
+  renderDetail(id);
+  document.getElementById('main').scrollTo({ top: 0, behavior: 'smooth' });
+  const activeEl = document.querySelector('.sb-item.active');
+  if (activeEl) activeEl.scrollIntoView({ block: 'nearest' });
 }
 
-function renderSection(s) {
-  document.getElementById('welcome-view').style.display = 'none';
-  var view = document.getElementById('section-view');
-  view.style.display = 'block';
+function showWelcome() {
+  activeId = null;
+  document.querySelectorAll('.sb-item').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.rail-item').forEach(el => el.classList.remove('has-active'));
+  document.getElementById('view-welcome').style.display = 'block';
+  document.getElementById('view-detail').style.display = 'none';
+  document.getElementById('main').scrollTo({ top: 0, behavior: 'smooth' });
+}
 
-  var reqFields = s.fields.filter(function(f){ return f.status==='required'; });
-  var optFields = s.fields.filter(function(f){ return f.status==='optional'; });
+/* ══════════════════════════════════════════════════════════════════════
+   RENDER DETAIL
+══════════════════════════════════════════════════════════════════════ */
+function typeBadge(f) {
+  const label = TYPE_LABELS[f.type] || f.type;
+  const multi = f.multiple ? ' <span style="font-size:10px;background:#F0FDF4;color:#16A34A;border:1px solid #BBF7D0;padding:1px 5px;border-radius:3px;margin-left:3px;">×multi</span>' : '';
+  if (f.type === 'taxonomy')    return `<span class="badge badge-taxonomy"><i class="ti ti-tags"></i>${label}</span>${multi}`;
+  if (f.type === 'media-image') return `<span class="badge badge-media"><i class="ti ti-photo"></i>Image</span>${multi}`;
+  if (f.type === 'media-doc')   return `<span class="badge badge-media"><i class="ti ti-file"></i>Document</span>${multi}`;
+  return `<span class="type-chip">${label}</span>${multi}`;
+}
 
-  // Note HTML
-  var noteHtml = '';
-  if (s.note) {
-    var noteClass = 'note-' + s.note.kind;
-    var noteIconClass = s.note.kind === 'tip' ? 'ti ti-bulb' : s.note.kind === 'warn' ? 'ti ti-alert-triangle' : 'ti ti-info-circle';
-    noteHtml = '<div class="' + noteClass + '" style="border-radius:6px;padding:10px 14px;margin-bottom:20px;font-size:13px;line-height:1.6;color:#374151;">' +
-      '<i class="' + noteIconClass + '" style="font-size:14px;margin-right:6px;vertical-align:middle;"></i>' + s.note.text + '</div>';
-  }
+function renderFieldsTable(ct, fields, isRequired) {
+  if (!fields.length) return '';
+  const labelClass = isRequired ? 'required-label' : 'optional-label';
+  const iconClass  = isRequired ? 'ti-circle-filled' : 'ti-circle';
+  const labelText  = isRequired ? 'Required Fields' : 'Optional Fields';
+  const rows = fields.map(f => `
+    <tr>
+      <td><span class="field-label">${f.label}</span><code class="field-machine">${f.machine}</code></td>
+      <td class="field-hint">${f.hint||''}</td>
+      <td>${typeBadge(f)}</td>
+      <td style="white-space:nowrap;">
+        <button class="btn btn-ghost" style="padding:3px 8px;font-size:11px;" onclick="openEditFieldModal('${ct.id}',${f.id})">Edit</button>
+        <button class="btn btn-danger" style="padding:3px 8px;font-size:11px;margin-left:3px;" onclick="deleteField('${ct.id}',${f.id})">Delete</button>
+      </td>
+    </tr>`).join('');
+  return `<div class="fields-section">
+    <div class="fields-section-label ${labelClass}"><i class="ti ${iconClass}"></i>${labelText}</div>
+    <table class="fields-table">
+      <thead><tr>
+        <th style="width:26%">Field</th>
+        <th style="width:38%">Description</th>
+        <th style="width:20%">Type</th>
+        <th style="width:16%">Actions</th>
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+  </div>`;
+}
 
-  var taxonomyNoteHtml = '';
-  if (s.taxonomyNote) {
-    taxonomyNoteHtml = '<div style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:6px;padding:10px 14px;margin-bottom:20px;font-size:12.5px;color:#475569;line-height:1.6;">' +
-      '<span style="font-weight:600;color:#1E1E1E;">Taxonomy note: </span>' + s.taxonomyNote + '</div>';
-  }
+function renderDetail(id) {
+  const ct = DATA.find(x => x.id === id);
+  if (!ct) return;
 
-  // Fields table
-  function fieldsTable(fields) {
-    if (!fields.length) return '<p style="color:#94A3B8;font-size:13px;font-style:italic;">None</p>';
-    var rows = fields.map(function(f){
-      var typeLabel = TYPE_LABELS[f.type] || f.type;
-      var multi = f.multiple ? ' <span style="font-size:10px;background:#F0FDF4;color:#16A34A;border:1px solid #BBF7D0;padding:1px 5px;border-radius:3px;margin-left:3px;">×multi</span>' : '';
-      return '<tr style="border-bottom:1px solid #F1F5F9;transition:background .1s;" onmouseover="this.style.background=\'#FAFCFF\'" onmouseout="this.style.background=\'\'">' +
-        '<td style="padding:10px 12px;font-size:13px;font-weight:500;color:#1E293B;white-space:nowrap;">' + f.label + multi + '</td>' +
-        '<td style="padding:10px 12px;"><code style="font-size:11px;background:#F8FAFC;color:#475569;padding:2px 7px;border-radius:4px;font-family:ui-monospace,monospace;border:1px solid #E8EDF2;">' + f.machine + '</code></td>' +
-        '<td style="padding:10px 12px;"><span class="type-pill">' + typeLabel + '</span></td>' +
-        '<td style="padding:10px 12px;font-size:12.5px;color:#64748B;line-height:1.55;">' + f.hint + '</td>' +
-        '<td style="padding:10px 12px;white-space:nowrap;">' +
-          '<button onclick="editField(\'' + s.id + '\',' + f.id + ')" style="background:white;border:1px solid #E2E8F0;color:#334155;padding:3px 9px;border-radius:5px;font-size:11px;cursor:pointer;margin-right:4px;transition:background .1s;" onmouseover="this.style.background=\'#F8FAFC\'" onmouseout="this.style.background=\'white\'">Edit</button>' +
-          '<button onclick="deleteField(\'' + s.id + '\',' + f.id + ')" style="background:white;border:1px solid #FECACA;color:#DC2626;padding:3px 9px;border-radius:5px;font-size:11px;cursor:pointer;transition:background .1s;" onmouseover="this.style.background=\'#FEF2F2\'" onmouseout="this.style.background=\'white\'">Delete</button>' +
-        '</td>' +
-        '</tr>';
+  const allIds = DATA.map(x => x.id);
+  const idx    = allIds.indexOf(id);
+  const prevCt = DATA[idx - 1];
+  const nextCt = DATA[idx + 1];
+  const cfg = getGroupCfg(ct.group);
+
+  const reqFields = (ct.fields||[]).filter(f => f.status === 'required');
+  const optFields = (ct.fields||[]).filter(f => f.status === 'optional');
+
+  const calloutHtml = ct.note ? `<div class="callout callout-${ct.note.kind}">
+    <i class="ti ${ct.note.kind==='tip'?'ti-check':ct.note.kind==='warn'?'ti-alert-triangle':'ti-info-circle'}"></i>
+    <span>${ct.note.text}</span></div>` : '';
+
+  const taxHtml = ct.taxonomyNote ? `<div class="taxonomy-note">${ct.taxonomyNote}</div>` : '';
+
+  const prevBtn = prevCt ? `<button class="detail-nav-btn prev" onclick="navigateTo('${prevCt.id}')">
+    <i class="ti ti-chevron-left detail-nav-icon"></i>
+    <div><div class="detail-nav-dir">Previous</div><div class="detail-nav-name">${prevCt.name}</div></div>
+  </button>` : `<div class="detail-nav-placeholder"></div>`;
+
+  const nextBtn = nextCt ? `<button class="detail-nav-btn next" onclick="navigateTo('${nextCt.id}')">
+    <div><div class="detail-nav-dir">Next</div><div class="detail-nav-name">${nextCt.name}</div></div>
+    <i class="ti ti-chevron-right detail-nav-icon"></i>
+  </button>` : `<div class="detail-nav-placeholder"></div>`;
+
+  document.getElementById('view-detail').innerHTML = `
+    <div class="detail-breadcrumb">
+      <span class="bc-link" onclick="showWelcome()">Home</span>
+      <i class="ti ti-chevron-right"></i>
+      <span style="color:${cfg.color};font-weight:500">${ct.group}</span>
+      <i class="ti ti-chevron-right"></i>
+      <span>${ct.name}</span>
+    </div>
+
+    <div class="detail-header">
+      <div class="detail-icon" style="background:${cfg.colorSoft};color:${cfg.color}">
+        <i class="ti ${(ct.icon||'ti-file').replace('ti ','').replace('ti-','')} ti-${(ct.icon||'ti-file').split('-').slice(1).join('-')}"></i>
+      </div>
+      <div>
+        <div class="detail-header-top">
+          <span class="detail-name">${ct.name}</span>
+          <code class="detail-machine">${ct.machine}</code>
+          <span class="detail-group-tag" style="background:${cfg.colorSoft};color:${cfg.color};border:1px solid ${cfg.color}22">
+            <i class="ti ${cfg.icon}" style="font-size:11px;margin-right:3px"></i>${ct.group}
+          </span>
+        </div>
+        <p class="detail-desc">${ct.description||''}</p>
+      </div>
+    </div>
+
+    <div class="detail-actions">
+      <button class="btn btn-dark" onclick="openEditContentTypeModal('${ct.id}')"><i class="ti ti-edit"></i> Edit</button>
+      <button class="btn btn-danger" onclick="deleteContentType('${ct.id}')"><i class="ti ti-trash"></i> Delete</button>
+      <button class="btn btn-primary" onclick="openCreateFieldModal('${ct.id}')"><i class="ti ti-plus"></i> Add Field</button>
+    </div>
+
+    <div class="detail-stats">
+      <div class="detail-stat"><i class="ti ti-table"></i>
+        <div><div class="detail-stat-val">${(ct.fields||[]).length}</div><div class="detail-stat-lbl">Total fields</div></div>
+      </div>
+      <div class="detail-stat"><i class="ti ti-circle-filled" style="color:#DC2626"></i>
+        <div><div class="detail-stat-val">${reqFields.length}</div><div class="detail-stat-lbl">Required</div></div>
+      </div>
+      <div class="detail-stat"><i class="ti ti-circle" style="color:#16A34A"></i>
+        <div><div class="detail-stat-val">${optFields.length}</div><div class="detail-stat-lbl">Optional</div></div>
+      </div>
+    </div>
+
+    ${calloutHtml}${taxHtml}
+    ${renderFieldsTable(ct, reqFields, true)}
+    ${renderFieldsTable(ct, optFields, false)}
+
+    <div class="detail-nav">${prevBtn}${nextBtn}</div>
+  `;
+
+  // Fix the icon rendering — just use the ct.icon class directly
+  const iconEl = document.querySelector('#view-detail .detail-icon i');
+  if (iconEl && ct.icon) { iconEl.className = ct.icon; iconEl.style.fontSize = '26px'; }
+}
+
+/* ══════════════════════════════════════════════════════════════════════
+   GROUP CARDS (Welcome)
+══════════════════════════════════════════════════════════════════════ */
+function buildGroupCards() {
+  const groupMap = {};
+  DATA.forEach(ct => { if (!groupMap[ct.group]) groupMap[ct.group]=[]; groupMap[ct.group].push(ct); });
+
+  const grid = document.getElementById('group-grid');
+  grid.innerHTML = GROUPS_CONFIG
+    .filter(g => groupMap[g.label])
+    .map(g => {
+      const items = groupMap[g.label];
+      return `<div class="group-card" onclick="navigateTo('${items[0].id}')" style="--card-accent:${g.color}">
+        <div class="group-card-icon" style="background:${g.colorSoft};color:${g.color}"><i class="ti ${g.icon}"></i></div>
+        <div class="group-card-title">${g.label}</div>
+        <div class="group-card-desc">${g.desc}</div>
+        <div class="group-card-count"><i class="ti ti-layers"></i> ${items.length} content type${items.length!==1?'s':''}</div>
+      </div>`;
     }).join('');
-    return '<div style="overflow-x:auto;border-radius:10px;border:1px solid #E8EDF2;box-shadow:0 1px 6px rgba(15,23,42,.04);"><table style="width:100%;border-collapse:collapse;min-width:520px;">' +
-      '<thead><tr style="background:#F8FAFC;border-bottom:1px solid #E8EDF2;">' +
-      '<th style="padding:9px 12px;font-size:10.5px;font-weight:700;color:#94A3B8;text-align:left;letter-spacing:.06em;text-transform:uppercase;">Field</th>' +
-      '<th style="padding:9px 12px;font-size:10.5px;font-weight:700;color:#94A3B8;text-align:left;letter-spacing:.06em;text-transform:uppercase;">Machine Name</th>' +
-      '<th style="padding:9px 12px;font-size:10.5px;font-weight:700;color:#94A3B8;text-align:left;letter-spacing:.06em;text-transform:uppercase;">Type</th>' +
-      '<th style="padding:9px 12px;font-size:10.5px;font-weight:700;color:#94A3B8;text-align:left;letter-spacing:.06em;text-transform:uppercase;">Hint</th>' +
-      '<th style="padding:9px 12px;font-size:10.5px;font-weight:700;color:#94A3B8;text-align:left;letter-spacing:.06em;text-transform:uppercase;">Actions</th>' +
-      '</tr></thead><tbody>' + rows + '</tbody></table></div>';
-  }
-
-  view.innerHTML =
-    // Header
-    '<div style="display:flex;align-items:flex-start;gap:14px;margin-bottom:20px;">' +
-      '<div style="width:50px;height:50px;border-radius:12px;background:' + s.color + ';display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 8px rgba(0,0,0,0.06);"><i class="' + s.icon + '" style="font-size:24px;color:#475569;"></i></div>' +
-      '<div style="flex:1;">' +
-        '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">' +
-          '<h1 style="font-size:20px;font-weight:700;color:#0F172A;margin:0;font-family:\'Space Grotesk\',sans-serif;letter-spacing:-0.01em;">' + s.name + '</h1>' +
-          '<span style="font-size:10.5px;background:#F1F5F9;color:#64748B;padding:2px 8px;border-radius:4px;border:1px solid #E2E8F0;letter-spacing:0.02em;">' + s.group + '</span>' +
-        '</div>' +
-        '<p style="color:#64748B;font-size:13.5px;margin:5px 0 0;line-height:1.6;">' + s.description + '</p>' +
-      '</div>' +
-    '</div>' +
-
-    '<div style="display:flex;gap:6px;margin-bottom:20px;">' +
-      '<button onclick="editContentType(\'' + s.id + '\')" style="background:#0F172A;color:white;border:1px solid #0F172A;padding:6px 13px;border-radius:6px;font-size:12px;cursor:pointer;font-family:Inter,sans-serif;font-weight:500;transition:opacity .15s;" onmouseover="this.style.opacity=\'.85\'" onmouseout="this.style.opacity=\'1\'">Edit</button>' +
-      '<button onclick="deleteContentType(\'' + s.id + '\')" style="background:white;color:#DC2626;border:1px solid #FECACA;padding:6px 13px;border-radius:6px;font-size:12px;cursor:pointer;font-family:Inter,sans-serif;transition:background .15s;" onmouseover="this.style.background=\'#FEF2F2\'" onmouseout="this.style.background=\'white\'">Delete</button>' +
-      '<button onclick="createField(\'' + s.id + '\')" style="margin-left:auto;background:linear-gradient(135deg,#2563EB,#3B82F6);color:white;border:none;padding:6px 14px;border-radius:6px;font-size:12px;cursor:pointer;font-family:Inter,sans-serif;font-weight:500;box-shadow:0 1px 4px rgba(59,130,246,.3);transition:opacity .15s;" onmouseover="this.style.opacity=\'.88\'" onmouseout="this.style.opacity=\'1\'">+ Add Field</button>' +
-    '</div>' +
-
-    // Meta row
-    '<div style="display:flex;gap:8px;margin-bottom:22px;flex-wrap:wrap;">' +
-      '<div class="glass-card" style="border-radius:8px;padding:10px 16px;text-align:center;">' +
-        '<div style="font-size:20px;font-weight:700;color:#0F172A;">' + s.fields.length + '</div>' +
-        '<div style="font-size:10.5px;color:#94A3B8;margin-top:2px;letter-spacing:0.03em;">Total</div>' +
-      '</div>' +
-      '<div class="glass-card" style="border-radius:8px;padding:10px 16px;text-align:center;">' +
-        '<div style="font-size:20px;font-weight:700;color:#DC2626;">' + reqFields.length + '</div>' +
-        '<div style="font-size:10.5px;color:#94A3B8;margin-top:2px;letter-spacing:0.03em;">Required</div>' +
-      '</div>' +
-      '<div class="glass-card" style="border-radius:8px;padding:10px 16px;text-align:center;">' +
-        '<div style="font-size:20px;font-weight:700;color:#D97706;">' + optFields.length + '</div>' +
-        '<div style="font-size:10.5px;color:#94A3B8;margin-top:2px;letter-spacing:0.03em;">Optional</div>' +
-      '</div>' +
-      '<div class="glass-card" style="border-radius:8px;padding:10px 16px;">' +
-        '<div style="font-size:10.5px;color:#94A3B8;margin-bottom:3px;letter-spacing:0.03em;">Machine Name</div>' +
-        '<code style="font-size:12px;color:#1E293B;font-family:ui-monospace,monospace;">' + s.machine + '</code>' +
-      '</div>' +
-    '</div>' +
-
-    noteHtml + taxonomyNoteHtml +
-
-    // Required fields
-    (reqFields.length ? '<div style="margin-bottom:24px;"><div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;"><span class="badge-req">Required</span><span style="font-size:13px;font-weight:600;color:#0F172A;">' + reqFields.length + ' field' + (reqFields.length!==1?'s':'') + '</span><div style="flex:1;height:1px;background:#F1F5F9;margin-left:4px;"></div></div>' + fieldsTable(reqFields) + '</div>' : '') +
-
-    // Optional fields
-    (optFields.length ? '<div style="margin-bottom:24px;"><div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;"><span class="badge-opt">Optional</span><span style="font-size:13px;font-weight:600;color:#0F172A;">' + optFields.length + ' field' + (optFields.length!==1?'s':'') + '</span><div style="flex:1;height:1px;background:#F1F5F9;margin-left:4px;"></div></div>' + fieldsTable(optFields) + '</div>' : '') +
-
-    // Navigation between sections
-    (function(){
-      var idx = DATA.findIndex(function(x){ return x.id === s.id; });
-      var prev = DATA[idx-1], next = DATA[idx+1];
-      if (!prev && !next) return '';
-      return '<div style="display:flex;gap:8px;margin-top:8px;padding-top:20px;border-top:1px solid #E2E8F0;">' +
-        (prev ? '<button onclick="selectSection(\'' + prev.id + '\')" style="display:flex;align-items:center;gap:6px;background:white;border:1px solid #E2E8F0;padding:7px 14px;border-radius:6px;font-size:12.5px;color:#475569;cursor:pointer;font-family:Inter,sans-serif;" onmouseover="this.style.background=\'#F8FAFC\'" onmouseout="this.style.background=\'white\'">← ' + prev.name + '</button>' : '<span></span>') +
-        '<div style="flex:1;"></div>' +
-        (next ? '<button onclick="selectSection(\'' + next.id + '\')" style="display:flex;align-items:center;gap:6px;background:white;border:1px solid #E2E8F0;padding:7px 14px;border-radius:6px;font-size:12.5px;color:#475569;cursor:pointer;font-family:Inter,sans-serif;" onmouseover="this.style.background=\'#F8FAFC\'" onmouseout="this.style.background=\'white\'"> ' + next.name + ' →</button>' : '') +
-        '</div>';
-    })();
 }
 
-// ─── WELCOME / GROUP OVERVIEW ────────────────────────────────────────────────
-function renderWelcome() {
-  var groups = {};
-  DATA.forEach(function(s){ if(!groups[s.group]) groups[s.group]=[]; groups[s.group].push(s); });
-  var el = document.getElementById('group-overview');
-  el.innerHTML = Object.keys(groups).map(function(g){
-    var items = groups[g];
-    var icons = items.slice(0,4).map(function(s){ return '<i class="' + s.icon + '" style="font-size:18px;color:#94A3B8;"></i>'; }).join('');
-    return '<div class="glass-card" onclick="selectSection(\'' + items[0].id + '\')" style="border-radius:10px;padding:16px;cursor:pointer;transition:box-shadow .15s, transform .15s, border-color .15s;" onmouseover="this.style.boxShadow=\'0 8px 24px rgba(59,130,246,.1)\';this.style.transform=\'translateY(-2px)\';this.style.borderColor=\'#BFDBFE\'" onmouseout="this.style.boxShadow=\'0 2px 10px rgba(15,23,42,.06)\';this.style.transform=\'translateY(0)\';this.style.borderColor=\'rgba(226,232,240,.9)\'">' +
-      '<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">' +
-        '<div style="color:#3B82F6;">' + (GROUP_ICONS[g]||'') + '</div>' +
-        '<span style="font-size:13px;font-weight:600;color:#0F172A;">' + g + '</span>' +
-      '</div>' +
-      '<div style="font-size:11px;color:#94A3B8;margin-bottom:10px;">' + items.length + ' content type' + (items.length!==1?'s':'') + '</div>' +
-      '<div style="display:flex;gap:5px;align-items:center;">' + icons + '</div>' +
-    '</div>';
-  }).join('');
-}
-
-// ─── SEARCH ──────────────────────────────────────────────────────────────────
-document.getElementById('search-input').addEventListener('input', function(){
-  var q = this.value.trim().toLowerCase();
+/* ══════════════════════════════════════════════════════════════════════
+   SEARCH
+══════════════════════════════════════════════════════════════════════ */
+document.getElementById('sb-search').addEventListener('input', function() {
+  const q = this.value.trim().toLowerCase();
   buildSidebar(q || null);
-  if (!q && activeId) {
-    document.querySelectorAll('.nav-item').forEach(function(el){
-      el.classList.toggle('active', el.getAttribute('data-id') === activeId);
-    });
-  }
 });
 
-// ─── KEYBOARD NAV ────────────────────────────────────────────────────────────
-document.addEventListener('keydown', function(e){
-  if (document.activeElement === document.getElementById('search-input')) return;
+/* ══════════════════════════════════════════════════════════════════════
+   KEYBOARD NAV
+══════════════════════════════════════════════════════════════════════ */
+document.addEventListener('keydown', e => {
+  if (document.activeElement === document.getElementById('sb-search')) return;
   if (!activeId) return;
-  var idx = DATA.findIndex(function(x){ return x.id === activeId; });
-  if (e.key === 'ArrowDown' && DATA[idx+1]) { e.preventDefault(); selectSection(DATA[idx+1].id); }
-  if (e.key === 'ArrowUp'   && DATA[idx-1]) { e.preventDefault(); selectSection(DATA[idx-1].id); }
+  const idx = DATA.findIndex(x => x.id === activeId);
+  if (e.key === 'ArrowDown' && DATA[idx+1]) { e.preventDefault(); navigateTo(DATA[idx+1].id); }
+  if (e.key === 'ArrowUp'   && DATA[idx-1]) { e.preventDefault(); navigateTo(DATA[idx-1].id); }
 });
 
-// ─── INIT ────────────────────────────────────────────────────────────────────
-// Add "New" button to header, after the stats block
-document.querySelector('header').insertAdjacentHTML(
-  "beforeend",
-  '<button onclick="createContentType()" style="margin-left:12px;background:rgba(59,130,246,0.15);color:#93C5FD;border:1px solid rgba(99,162,255,0.3);padding:5px 12px;border-radius:6px;font-size:11.5px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif;letter-spacing:0.02em;transition:background .15s;" onmouseover="this.style.background=\'rgba(59,130,246,0.25)\'" onmouseout="this.style.background=\'rgba(59,130,246,0.15)\'">+ New</button>',
-);
+/* ══════════════════════════════════════════════════════════════════════
+   STAT COUNTER
+══════════════════════════════════════════════════════════════════════ */
+function updateStatCount() {
+  document.getElementById('stat-count').textContent = DATA.length;
+}
 
-sidebarCollapsed = sessionStorage.getItem("sidebarCollapsed") === "1";
-document.getElementById("sidebar-toggle").addEventListener("click", toggleSidebar);
-applySidebarState();
+/* ══════════════════════════════════════════════════════════════════════
+   INIT
+══════════════════════════════════════════════════════════════════════ */
+if (sessionStorage.getItem('sbCollapsed') === '1') sidebar.classList.add('collapsed');
 
 loadData()
-  .then(function () {
-    buildSidebar(null);
-    renderWelcome();
-  })
-  .catch(function (err) {
-    console.warn("API unavailable, using local data:", err.message);
-    buildSidebar(null);
-    renderWelcome();
-    showToast("API offline — showing local data. Run `npm run dev:api` for live data.", "error");
+  .then(() => { buildSidebar(); buildGroupCards(); updateStatCount(); })
+  .catch(err => {
+    console.warn('API offline:', err.message);
+    buildSidebar(); buildGroupCards(); updateStatCount();
+    showToast('API offline — showing local data. Run `npm run dev:api` to enable live data.', 'error');
   });
 </script>
 </body>

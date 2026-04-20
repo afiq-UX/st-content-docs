@@ -283,21 +283,21 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text); font
 
 .group-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px,1fr)); gap: 1rem; }
 .group-card {
-  background: #ffffff;
+  background: linear-gradient(180deg, #F4F4F4 58.27%, #93C5FD 204.21%), #FFF;
   border-radius: 12px;
-  border: 1px solid rgba(30, 30, 30, 0.1);
+  border: 2px solid rgba(147, 197, 253, 0.20);
+  border-top: none;
+  box-shadow: 0 2px 6px 0 rgba(15, 23, 41, 0.04);
   padding: 1.25rem;
   cursor: pointer;
   position: relative;
-  overflow: hidden;
-  transition: border-color 0.3s ease-in, box-shadow 0.3s ease-in;
+  transition: background 0.7s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.7s cubic-bezier(0.16, 1, 0.3, 1);
 }
-.group-card:hover::after { opacity: 1; }
 .group-card:hover {
-  border-color: rgba(147,197,253,0.2);
-  border-bottom-color: solid 2px;
-  background: radial-gradient(circle at 50% 100%, rgba(147, 197, 253, 0.3), var(--surface) 100%);
-  transform: translateY(-1px);
+  background: radial-gradient(118.54% 118.54% at 50% 0%, #ffffff 47.14%, #93C5FD 100%), #FFF;
+  border: 2px solid rgba(147, 197, 253, 0.20);
+  border-top: none;
+  box-shadow: 0 4px 12px 0 rgba(15, 23, 41, 0.08);
 }
 .group-card-icon {
   width: 32px; height: 32px;
